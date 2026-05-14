@@ -1,0 +1,365 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Insights | Ads Manager</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <style>
+    :root {
+      --bg: #08090a;
+      --panel: #0f1011;
+      --surface: #191a1b;
+      --surface-hover: #28282c;
+      --fg: #f7f8f8;
+      --fg-secondary: #d0d6e0;
+      --fg-muted: #8a8f98;
+      --fg-dim: #62666d;
+      --accent: #5e6ad2;
+      --accent-bright: #7170ff;
+      --success: #10b981;
+      --danger: #ff4d4d;
+      --warning: #f59e0b;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --font-main: 'Inter var', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: ui-monospace, SF Mono, Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-main);
+      font-feature-settings: "cv01", "ss03";
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar - Nav */
+    .sidebar {
+      width: 240px;
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 8px; margin-bottom: 24px; }
+    .logo-mark { width: 24px; height: 24px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .brand-name { font-weight: 590; font-size: 14px; letter-spacing: -0.01em; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--fg-secondary); text-decoration: none; font-size: 13px; font-weight: 510; margin-bottom: 2px; }
+    .nav-item:hover { background: var(--surface-hover); color: var(--fg); }
+    .nav-item.active { background: rgba(255,255,255,0.05); color: var(--fg); }
+
+    /* Main Container */
+    .viewport { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    
+    header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(8, 9, 10, 0.8);
+      backdrop-filter: blur(8px);
+      flex-shrink: 0;
+    }
+    .view-title { font-size: 18px; font-weight: 510; letter-spacing: -0.02em; }
+
+    /* Content Layout */
+    .content-area { flex: 1; display: flex; overflow: hidden; }
+    
+    .feed-container { flex: 1; overflow-y: auto; padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+    .chat-panel { width: 400px; border-left: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; }
+
+    /* Recommendation Cards */
+    .rec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .rec-card:hover { border-color: var(--accent-bright); }
+
+    .rec-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .rec-category { 
+      font-size: 10px; 
+      font-weight: 600; 
+      color: var(--accent-bright); 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .impact-pill {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .rec-title { font-size: 16px; font-weight: 510; color: var(--fg); letter-spacing: -0.01em; }
+    .rec-desc { font-size: 14px; color: var(--fg-muted); line-height: 1.5; max-width: 600px; }
+
+    .rec-metrics { display: flex; gap: 24px; padding: 12px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+    .metric-group { display: flex; flex-direction: column; gap: 4px; }
+    .metric-label { font-size: 10px; color: var(--fg-dim); text-transform: uppercase; }
+    .metric-value { font-size: 13px; font-family: var(--font-mono); color: var(--fg-secondary); }
+
+    .rec-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    
+    .btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: var(--fg-secondary);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 510;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .btn:hover { background: rgba(255,255,255,0.08); border-color: var(--fg-dim); }
+    .btn-primary { background: var(--accent); color: white; border: none; }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    /* AI Chat Sidebar */
+    .chat-header { padding: 24px; border-bottom: 1px solid var(--border-subtle); }
+    .chat-title { font-size: 14px; font-weight: 590; color: var(--fg); display: flex; align-items: center; gap: 8px; }
+    .ai-sparkle { color: var(--accent-bright); }
+
+    .message-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .message { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+    .message.user { align-self: flex-end; background: var(--surface-hover); color: var(--fg); border-bottom-right-radius: 2px; }
+    .message.ai { align-self: flex-start; background: rgba(113, 112, 255, 0.05); border: 1px solid rgba(113, 112, 255, 0.1); color: var(--fg-secondary); border-bottom-left-radius: 2px; }
+
+    .chat-input-area { padding: 20px; border-top: 1px solid var(--border-subtle); position: relative; }
+    .chat-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      padding-right: 48px;
+      color: var(--fg);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .send-btn {
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--fg-dim);
+      cursor: pointer;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+      </div>
+      <span class="brand-name">WAR ROOM</span>
+    </div>
+    <nav>
+      <a href="war-room-dashboard.html" class="nav-item">Overview</a>
+      <a href="#" class="nav-item">Ads Manager</a>
+      <a href="competitor-intelligence.html" class="nav-item">Competitor Intel</a>
+      <a href="daily-performance-log.html" class="nav-item">Daily Perf Log</a>
+      <a href="#" class="nav-item active">AI Insights</a>
+    </nav>
+  </aside>
+
+  <div class="viewport">
+    <header>
+      <div class="view-title">AI Performance Insights</div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn">Configure AI</button>
+        <button class="btn btn-primary">Run Deep Audit</button>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- Recommendations Feed -->
+      <main class="feed-container">
+        <!-- Rec 1 -->
+        <div class="rec-card" data-od-id="rec-high-cpc">
+          <div class="rec-header">
+            <span class="rec-category">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              Efficiency Alert
+            </span>
+            <span class="impact-pill">+12.5% Estimated ROAS</span>
+          </div>
+          <div class="rec-title">High CPC Detected on USA_Broad_Advantage+</div>
+          <div class="rec-desc">
+            The CPC has spiked to $4.82 (up 42% from 7-day avg). AI detected creative fatigue on "Video_01". Frequency in the last 24h is 2.8.
+          </div>
+          <div class="rec-metrics">
+            <div class="metric-group">
+              <span class="metric-label">Current CPC</span>
+              <span class="metric-value">$4.82</span>
+            </div>
+            <div class="metric-group">
+              <span class="metric-label">Avg. ROAS</span>
+              <span class="metric-value">2.1x</span>
+            </div>
+            <div class="metric-group">
+              <span class="metric-label">Confidence</span>
+              <span class="metric-value" style="color: var(--success);">98%</span>
+            </div>
+          </div>
+          <div class="rec-footer">
+            <span style="font-size: 12px; color: var(--fg-dim);">Suggested Action: Swap creative with "Winner_V3" from Creative Lab.</span>
+            <button class="btn btn-primary" onclick="this.innerHTML='Applying...'; setTimeout(()=>this.innerHTML='Applied', 1000)">Apply Automated Fix</button>
+          </div>
+        </div>
+
+        <!-- Rec 2 -->
+        <div class="rec-card" data-od-id="rec-scale">
+          <div class="rec-header">
+            <span class="rec-category">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              Scaling Opportunity
+            </span>
+            <span class="impact-pill" style="background: rgba(94, 106, 210, 0.1); color: var(--accent-bright);">High Scaling Potential</span>
+          </div>
+          <div class="rec-title">UK_Interest_LAL_Scaling is Underspending</div>
+          <div class="rec-desc">
+            This campaign has maintained a 4.8x ROAS for 4 days with consistent CPA. Facebook is limiting spend due to low initial budget. 
+          </div>
+          <div class="rec-metrics">
+            <div class="metric-group">
+              <span class="metric-label">Daily Budget</span>
+              <span class="metric-value">$200.00</span>
+            </div>
+            <div class="metric-group">
+              <span class="metric-label">Target Spend</span>
+              <span class="metric-value">$800.00</span>
+            </div>
+            <div class="metric-group">
+              <span class="metric-label">AI Rank</span>
+              <span class="metric-value">#1 Opportunity</span>
+            </div>
+          </div>
+          <div class="rec-footer">
+            <span style="font-size: 12px; color: var(--fg-dim);">Suggested Action: Increase budget to $500/day immediately.</span>
+            <button class="btn btn-primary">Scale Campaign</button>
+          </div>
+        </div>
+
+        <!-- Rec 3 -->
+        <div class="rec-card" data-od-id="rec-overlap">
+          <div class="rec-header">
+            <span class="rec-category">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Audience Overlap
+            </span>
+            <span class="impact-pill" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">Efficiency Leak</span>
+          </div>
+          <div class="rec-title">Overlap detected between 'USA_Broad' and 'USA_Interests'</div>
+          <div class="rec-desc">
+            35% audience overlap detected. Both campaigns are bidding for the same users, causing internal auction competition and raising CPMs by 15%.
+          </div>
+          <div class="rec-footer">
+            <span style="font-size: 12px; color: var(--fg-dim);">Suggested Action: Consolidate campaigns or apply audience exclusions.</span>
+            <button class="btn">View Overlap Map</button>
+          </div>
+        </div>
+      </main>
+
+      <!-- AI Chat Sidebar -->
+      <aside class="chat-panel">
+        <div class="chat-header">
+          <div class="chat-title">
+            <svg class="ai-sparkle" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            Ads Manager Assistant
+          </div>
+        </div>
+
+        <div class="message-container">
+          <div class="message ai">
+            Hello! I'm your Ads Manager Assistant. I've analyzed your account for the last 24 hours. Would you like to see which campaigns are ready for scaling?
+          </div>
+          <div class="message user">
+            Yes, which campaign should I scale right now for the best ROAS?
+          </div>
+          <div class="message ai">
+            Based on current performance and auction stability, the <b>UK_Interest_LAL_Scaling</b> campaign is your best bet. It has a 4.8x ROAS and CPMs are trending down. I recommend a 25% budget increase.
+          </div>
+          <div class="message user">
+            What about the high CPC on the USA campaign?
+          </div>
+          <div class="message ai">
+            The USA campaign is suffering from creative fatigue. Frequency is high at 2.8. I've added a recommendation to swap the creative to your left feed.
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" placeholder="Ask about campaign scaling, hooks, or CPA...">
+          <button class="send-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Simulate interactive feel
+    document.querySelector('.chat-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter' && this.value) {
+        const msg = this.value;
+        const container = document.querySelector('.message-container');
+        
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user';
+        userMsg.innerText = msg;
+        container.appendChild(userMsg);
+        
+        this.value = '';
+        container.scrollTop = container.scrollHeight;
+        
+        setTimeout(() => {
+          const aiMsg = document.createElement('div');
+          aiMsg.className = 'message ai';
+          aiMsg.innerText = "I'm processing that request. Analyzing account metrics...";
+          container.appendChild(aiMsg);
+          container.scrollTop = container.scrollHeight;
+        }, 600);
+      }
+    });
+  </script>
+
+</body>
+</html>

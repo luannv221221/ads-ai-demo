@@ -1,0 +1,215 @@
+{
+  "main": {
+    "id": "060d18a102415fb5",
+    "type": "split",
+    "children": [
+      {
+        "id": "1f04346ecab581bd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "67cf59a4f8c8ea6e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "30-Notes/Daily-Meetings.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Daily-Meetings"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e96fb44a141eebd9",
+    "type": "split",
+    "children": [
+      {
+        "id": "7934a24323835dea",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "688a3f1bfb2ebf44",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "5ca0093bd4520293",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "4bc9c6dc7ff2fa14",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "aa3970d990def059",
+    "type": "split",
+    "children": [
+      {
+        "id": "47d2b9fe4c8bb8d6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9b4c69c901f30528",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "fe99551fd91d332c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "705b8f4de5124c9f",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "271157421805c1ea",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "5fe9ed48a9f70da5",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "67cf59a4f8c8ea6e",
+  "lastOpenFiles": [
+    "Untitled.md",
+    "30-Notes/Daily-Meetings.md",
+    "40-Resources/Design/ads-manager-prototype.html",
+    "10-Projects/Ads-Manager-Core.md",
+    "40-Resources/Design/full-funnel-capi.html",
+    "40-Resources/Design/creative-ab-testing.html",
+    "40-Resources/Design/ai-creative-generator.html",
+    "40-Resources/Design/automated-alerts.html",
+    "40-Resources/Design/ai-insights.html",
+    "10-Projects/Features/Full-Funnel-CAPI.md",
+    "10-Projects/Features/Dashboard-War-Room.md",
+    "10-Projects/Features/Creative-AB-Testing.md",
+    "10-Projects/Features/Automated-Alerts.md",
+    "10-Projects/Features/AI-Performance-Insights.md",
+    "Untitled.canvas",
+    "40-Resources/Design/daily-performance-log.html",
+    "40-Resources/Design/competitor-intelligence.html",
+    "40-Resources/Design/war-room-dashboard.html",
+    "10-Projects/Features/Daily-Performance-Log.md",
+    "10-Projects/Features/AI-Creative-Generator.md",
+    "10-Projects/Features/Ads-Manager-Core.md",
+    "00-Meta/Templates/Feature Template.md",
+    "10-Projects/Features/Competitor-Intelligence.md",
+    "10-Projects/Features",
+    "40-Resources/Design/UI-UX Plan.md",
+    "CLAUDE.md",
+    "README.md",
+    "00-Meta/Templates/Bug Template.md",
+    "00-Meta/Templates/Project Template.md"
+  ]
+}

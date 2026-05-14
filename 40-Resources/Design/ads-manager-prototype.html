@@ -1,0 +1,471 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>War Room | Performance Marketing Suite</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <style>
+    :root {
+      --bg: #08090a;
+      --panel: #0f1011;
+      --surface: #191a1b;
+      --surface-hover: #28282c;
+      --fg: #f7f8f8;
+      --fg-secondary: #d0d6e0;
+      --fg-muted: #8a8f98;
+      --fg-dim: #62666d;
+      --accent: #5e6ad2;
+      --accent-bright: #7170ff;
+      --accent-hover: #828fff;
+      --success: #10b981;
+      --danger: #ff4d4d;
+      --warning: #f59e0b;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --font-main: 'Inter var', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: ui-monospace, SF Mono, Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-main);
+      font-feature-settings: "cv01", "ss03";
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: 240px;
+      border-right: 1px solid var(--border);
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 8px; margin-bottom: 24px; }
+    .logo-mark { width: 24px; height: 24px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; }
+    .nav-item { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      color: var(--fg-secondary); 
+      text-decoration: none; 
+      font-size: 13px; 
+      font-weight: 510; 
+      margin-bottom: 2px; 
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .nav-item:hover { background: var(--surface-hover); color: var(--fg); }
+    .nav-item.active { background: rgba(255,255,255,0.05); color: var(--fg); }
+    .nav-item svg { width: 16px; height: 16px; opacity: 0.7; }
+
+    /* --- VIEWPORT --- */
+    .viewport { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+    header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(8, 9, 10, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .view-title { font-size: 18px; font-weight: 510; letter-spacing: -0.02em; }
+    #view-content { flex: 1; overflow-y: auto; position: relative; }
+
+    /* --- COMMON UI ELEMENTS --- */
+    .content-padding { padding: 32px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 510; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-secondary { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--fg-secondary); }
+    .pill { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 510; cursor: pointer; }
+    .pill:hover { border-color: var(--fg-dim); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 12px 16px; color: var(--fg-dim); font-size: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); color: var(--fg-secondary); }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover { background: rgba(255,255,255,0.02); }
+
+    /* --- DRILL DOWN COMPONENTS --- */
+    #side-panel { position: fixed; right: -500px; top: 0; width: 440px; height: 100vh; background: var(--panel); border-left: 1px solid var(--border); z-index: 1000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 40px; box-shadow: -20px 0 60px rgba(0,0,0,0.5); }
+    #side-panel.open { right: 0; }
+    .panel-close { position: absolute; top: 20px; left: 20px; cursor: pointer; color: var(--fg-dim); font-size: 20px; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1100; padding: 40px; }
+    .modal-content { background: var(--panel); width: 640px; padding: 40px; border-radius: 16px; border: 1px solid var(--border); position: relative; }
+
+    /* --- TOAST --- */
+    #toast-container { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--surface); border: 1px solid var(--accent); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 510; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.3s forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- DASHBOARD SPECIFIC --- */
+    .kpi-row { grid-column: span 12; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 8px; }
+    .chart-box { grid-column: span 12; height: 300px; padding: 24px; position: relative; }
+    
+    /* --- COMPETITOR INTEL SPECIFIC --- */
+    .ad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .ad-card { aspect-ratio: 16/10; background: #111; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); position: relative; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .ad-card:hover { border-color: var(--accent); }
+    .ad-score { position: absolute; top: 12px; right: 12px; background: var(--success); color: black; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+    /* --- CAPI SPECIFIC --- */
+    .funnel-step { height: 160px; background: linear-gradient(180deg, rgba(94,106,210,0.1), transparent); border: 1px solid var(--border); border-bottom: none; border-radius: 4px 4px 0 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 16px; flex: 1; position: relative; }
+    .conv-label { position: absolute; top: -30px; font-size: 11px; font-weight: 600; color: var(--accent-bright); }
+
+    /* --- CREATIVE GEN SPECIFIC --- */
+    .gen-layout { display: flex; height: calc(100vh - 64px); }
+    .gen-sidebar { width: 320px; border-right: 1px solid var(--border); background: var(--panel); padding: 24px; }
+    .gen-workspace { flex: 1; padding: 32px; overflow-y: auto; }
+    .fb-preview { width: 340px; background: white; border-radius: 8px; color: black; padding: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  </style>
+</head>
+<body>
+
+  <!-- GLOBAL SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-mark">W</div>
+      <span class="brand-name">WAR ROOM</span>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('competitor')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Competitor Intel
+      </div>
+      <div class="nav-item" onclick="navigate('insights')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        AI Insights
+      </div>
+      <div class="nav-item" onclick="navigate('log')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Daily Log
+      </div>
+      <div class="nav-item" onclick="navigate('alerts')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Alerts
+      </div>
+      <div class="nav-item" onclick="navigate('testing')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        A/B Testing
+      </div>
+      <div class="nav-item" onclick="navigate('capi')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        CAPI
+      </div>
+      <div class="nav-item" onclick="navigate('gen')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l5.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        Creative Generator
+      </div>
+    </nav>
+  </aside>
+
+  <!-- VIEWPORT -->
+  <main class="viewport">
+    <header>
+      <div class="view-title" id="page-title">Dashboard</div>
+      <div id="header-actions">
+        <button class="btn" onclick="showToast('Live data synchronized.')">Sync Data</button>
+      </div>
+    </header>
+    
+    <div id="view-content">
+      <!-- Dynamic Content Injected Here -->
+    </div>
+  </main>
+
+  <!-- SHARED OVERLAYS -->
+  <div id="side-panel">
+    <div class="panel-close" onclick="closePanel()">✕</div>
+    <h2 id="panel-title" style="margin-bottom: 8px;">Campaign Detail</h2>
+    <p style="color: var(--fg-dim); font-size: 14px; margin-bottom: 32px;">Real-time performance analytics</p>
+    <div style="height: 180px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px;"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;">
+      <div class="card" style="padding: 16px;"><div style="font-size: 10px; color: var(--fg-dim);">ROAS</div><div id="panel-roas" style="font-size: 20px; font-weight: 590;">4.5x</div></div>
+      <div class="card" style="padding: 16px;"><div style="font-size: 10px; color: var(--fg-dim);">Spend</div><div id="panel-spend" style="font-size: 20px; font-weight: 590;">$4k</div></div>
+    </div>
+    <button class="btn" style="width: 100%;" onclick="showToast('Scaling action queued.')">Scale Budget +20%</button>
+  </div>
+
+  <div class="modal-overlay" id="ad-modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h2 id="modal-title" style="margin-bottom: 12px;">Creative Deep Dive</h2>
+      <div id="modal-body" style="color: var(--fg-secondary); line-height: 1.6; margin-bottom: 32px;">AI analysis content...</div>
+      <button class="btn" onclick="showToast('Analysis copied to clipboard.')">Copy AI Insights</button>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- SPA ENGINE -->
+  <script>
+    const VIEWS = {
+      dashboard: `
+        <div class="content-padding">
+          <div class="kpi-row">
+            <div class="card" style="padding: 16px;"><div style="font-size:10px; color:var(--fg-dim);">SPEND</div><div style="font-size:20px; font-weight:590;">$24,842</div></div>
+            <div class="card" style="padding: 16px;"><div style="font-size:10px; color:var(--fg-dim);">REVENUE</div><div style="font-size:20px; font-weight:590; color:var(--success);">$112,402</div></div>
+            <div class="card" style="padding: 16px;"><div style="font-size:10px; color:var(--fg-dim);">ROAS</div><div style="font-size:20px; font-weight:590;">4.52x</div></div>
+            <div class="card" style="padding: 16px;"><div style="font-size:10px; color:var(--fg-dim);">CPA</div><div style="font-size:20px; font-weight:590;">$18.40</div></div>
+            <div class="card" style="padding: 16px;"><div style="font-size:10px; color:var(--fg-dim);">CTR</div><div style="font-size:20px; font-weight:590;">2.84%</div></div>
+          </div>
+          <div class="card chart-box" style="margin: 20px 0;">
+            <div style="font-size: 14px; font-weight: 590;">Hourly Revenue vs Spend</div>
+            <div style="flex:1; border-left:1px solid var(--border-subtle); border-bottom:1px solid var(--border-subtle); margin-top:20px;">
+              <svg width="100%" height="100%" preserveAspectRatio="none">
+                <path d="M0,180 L100,120 L200,150 L300,90 L400,110 L500,50" fill="none" stroke="var(--success)" stroke-width="2"></path>
+                <path d="M0,190 L100,170 L200,185 L300,160 L400,175 L500,150" fill="none" stroke="var(--accent)" stroke-width="2"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="card table-card" style="grid-column: span 6;">
+              <div style="padding:16px; border-bottom:1px solid var(--border-subtle); font-size:13px; font-weight:590;">Scaling Winners</div>
+              <table>
+                <thead><tr><th>Campaign</th><th>ROAS</th><th>Spend</th></tr></thead>
+                <tbody>
+                  <tr class="clickable" onclick="openPanel('USA_Broad_LAL', '6.2x', '$4,210')"><td>USA_Broad_LAL</td><td>6.2x</td><td>$4,210</td></tr>
+                  <tr class="clickable" onclick="openPanel('UK_Scaling_V2', '5.4x', '$3,100')"><td>UK_Scaling_V2</td><td>5.4x</td><td>$3,100</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card table-card" style="grid-column: span 6;">
+              <div style="padding:16px; border-bottom:1px solid var(--border-subtle); font-size:13px; font-weight:590;">Underperforming</div>
+              <table>
+                <thead><tr><th>Campaign</th><th>ROAS</th><th>CPA</th></tr></thead>
+                <tbody>
+                  <tr class="clickable" onclick="openPanel('Canada_Retargeting', '1.1x', '$48.20')"><td>Canada_Retargeting</td><td>1.1x</td><td>$48.20</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `,
+      competitor: `
+        <div class="content-padding">
+          <div style="display:flex; gap:12px; margin-bottom: 24px;">
+            <button class="pill active">Trending</button>
+            <button class="pill">eCommerce</button>
+            <button class="pill">SaaS</button>
+          </div>
+          <div class="ad-grid">
+            <div class="ad-card" onclick="openAd('Linear.app', 'Hook: Speed is the ultimate feature. Analysis: Focus on high-contrast UI and motion.')">
+              <div class="ad-score">9.8</div>
+              <div style="font-size:14px; font-weight:590;">Linear.app</div>
+              <div style="font-size:11px; color:var(--fg-muted);">Modern Task Management</div>
+            </div>
+            <div class="ad-card" onclick="openAd('Shopify', 'Hook: Launch your business in minutes. Analysis: Emotional resonance for new entrepreneurs.')">
+              <div class="ad-score">9.2</div>
+              <div style="font-size:14px; font-weight:590;">Shopify</div>
+              <div style="font-size:11px; color:var(--fg-muted);">Build your empire</div>
+            </div>
+            <div class="ad-card" onclick="openAd('Mercury', 'Hook: The bank for startups. Analysis: Minimalist banking UI and trust markers.')">
+              <div class="ad-score">8.7</div>
+              <div style="font-size:14px; font-weight:590;">Mercury</div>
+              <div style="font-size:11px; color:var(--fg-muted);">Startup Banking</div>
+            </div>
+          </div>
+        </div>
+      `,
+      insights: `
+        <div style="display:flex; height: calc(100vh - 64px);">
+          <div style="flex:1; padding:40px; display:flex; flex-direction:column;">
+            <div id="chat-thread" style="flex:1; overflow-y:auto; margin-bottom:24px;">
+              <div style="background:var(--surface); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; max-width:80%;">
+                I've finished today's account audit. USA_Broad is stable at 4.2x ROAS. Scale by 20%?
+              </div>
+            </div>
+            <div style="margin-bottom:16px; display:flex; gap:8px;">
+              <button class="pill" onclick="askAI('Should I scale USA_Broad?')">Scale Winners</button>
+              <button class="pill" onclick="askAI('Why is CPA rising in UK?')">Audit UK</button>
+            </div>
+            <input type="text" id="chat-input" placeholder="Ask AI..." style="width:100%; background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px; color:white; outline:none;" onkeypress="if(event.key==='Enter') askAI(this.value)">
+          </div>
+        </div>
+      `,
+      log: `
+        <div class="content-padding">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+            <h2 style="font-size: 24px; font-weight: 590;">Performance Log</h2>
+            <button class="btn" onclick="showToast('Log entry created.')">Add Entry</button>
+          </div>
+          <div class="card">
+            <table>
+              <thead><tr><th>Date</th><th>Spend</th><th>ROAS</th><th>AI Insight</th></tr></thead>
+              <tbody>
+                <tr><td>Oct 24, 2023</td><td>$4,821</td><td>4.6x</td><td>Strong conversion floor today.</td></tr>
+                <tr><td>Oct 23, 2023</td><td>$4,102</td><td>3.4x</td><td>CPM inflation detected in UK.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `,
+      alerts: `
+        <div class="content-padding">
+          <h2 style="margin-bottom:32px;">Active Rules</h2>
+          <div class="card" style="padding:24px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>If Spend > $100 and ROAS < 1.0, Pause Campaign.</div>
+            <button class="btn btn-secondary" onclick="showToast('Rule saved.')">Edit Rule</button>
+          </div>
+          <div class="card" style="padding:24px; display:flex; justify-content:space-between; align-items:center;">
+            <div>If CTR < 0.5% after 5000 impressions, Notify Slack.</div>
+            <button class="btn btn-secondary" onclick="showToast('Rule saved.')">Edit Rule</button>
+          </div>
+        </div>
+      `,
+      testing: `
+        <div class="content-padding">
+          <div class="grid">
+            <div class="card" style="grid-column: span 6; padding:24px; border-color:var(--success);">
+              <div style="color:var(--success); font-weight:700; font-size:10px; margin-bottom:8px;">WINNER (98% Confidence)</div>
+              <h3 style="margin-bottom:16px;">Version A: UGC Style</h3>
+              <div style="font-size:24px; font-weight:590; margin-bottom:16px;">5.2x ROAS</div>
+              <button class="btn" onclick="showToast('Winner scaled.')">Scale Globally</button>
+            </div>
+            <div class="card" style="grid-column: span 6; padding:24px; border-color:var(--danger); opacity: 0.6;">
+              <div style="color:var(--danger); font-weight:700; font-size:10px; margin-bottom:8px;">LOSER</div>
+              <h3 style="margin-bottom:16px;">Version B: Studio Shot</h3>
+              <div style="font-size:24px; font-weight:510; margin-bottom:16px;">3.1x ROAS</div>
+              <button class="btn btn-secondary" onclick="showToast('Loser killed.')">Kill Ad</button>
+            </div>
+          </div>
+        </div>
+      `,
+      capi: `
+        <div class="content-padding">
+          <div class="card" style="padding:24px; margin-bottom:24px;">
+            <div style="display:flex; gap:12px; height:180px; align-items:flex-end;">
+              <div class="funnel-step"><div>Imp</div></div>
+              <div class="funnel-step" style="height:60%;"><div>Click</div><span class="conv-label">3.2%</span></div>
+              <div class="funnel-step" style="height:30%;"><div>ATC</div><span class="conv-label">12%</span></div>
+              <div class="funnel-step" style="height:15%;"><div>Buy</div><span class="conv-label">24%</span></div>
+            </div>
+          </div>
+          <div class="card" style="padding:24px;">
+            <h3>Match Quality: 9.2/10</h3>
+            <button class="btn btn-secondary" style="margin-top:16px;" onclick="showToast('Diagnostic run.')">Run Diagnostic</button>
+          </div>
+        </div>
+      `,
+      gen: `
+        <div class="gen-layout">
+          <aside class="gen-sidebar">
+            <h3 style="margin-bottom:24px;">Creative Brief</h3>
+            <textarea style="width:100%; height:120px; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; color:white; margin-bottom:16px;" placeholder="Describe your product..."></textarea>
+            <button class="btn" style="width:100%;" onclick="showToast('Generation started...')">Generate Bundle</button>
+          </aside>
+          <div class="gen-workspace">
+            <h2>Generated Drafts</h2>
+            <div class="card" style="padding:24px; margin-top:24px;">
+              <p style="margin-bottom:16px;">"Stop back pain while coding. The only chair designed for devs."</p>
+              <button class="pill" onclick="showToast('Copied.')">Copy Text</button>
+            </div>
+          </div>
+          <div style="width:400px; padding:32px; border-left:1px solid var(--border); background:var(--panel);">
+             <h3 style="margin-bottom:24px;">Mockup</h3>
+             <div class="fb-preview">
+                <div style="font-weight:700; margin-bottom:4px;">Linear Ads</div>
+                <div style="font-size:12px; color:#65676b; margin-bottom:8px;">Sponsored</div>
+                <div style="font-size:14px; margin-bottom:8px;">Stop back pain while coding.</div>
+                <div style="aspect-ratio:1; background:#eee; margin-bottom:8px;"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:700;">Upgrade your desk.</span>
+                  <button style="background:#e4e6eb; border:none; padding:6px 12px; border-radius:4px; font-weight:700;">Shop Now</button>
+                </div>
+             </div>
+          </div>
+        </div>
+      `
+    };
+
+    function navigate(viewId) {
+      const content = document.getElementById('view-content');
+      content.innerHTML = VIEWS[viewId] || VIEWS.dashboard;
+      
+      // Update Sidebar Active State
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const items = Array.from(document.querySelectorAll('.nav-item'));
+      const activeItem = items.find(el => el.getAttribute('onclick').includes(viewId));
+      if (activeItem) activeItem.classList.add('active');
+
+      // Update Title
+      const titles = { dashboard: 'Dashboard', competitor: 'Competitor Intel', insights: 'AI Insights', log: 'Daily Log', alerts: 'Alerts', testing: 'A/B Testing', capi: 'CAPI', gen: 'Creative Generator' };
+      document.getElementById('page-title').innerText = titles[viewId] || 'Dashboard';
+      
+      // Scroll to top
+      content.scrollTop = 0;
+    }
+
+    function showToast(m) {
+      const w = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.innerHTML = `✔ ${m}`;
+      w.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.remove(), 300);
+      }, 3000);
+    }
+
+    function openPanel(name, roas, spend) {
+      document.getElementById('panel-title').innerText = name;
+      document.getElementById('panel-roas').innerText = roas;
+      document.getElementById('panel-spend').innerText = spend;
+      document.getElementById('side-panel').classList.add('open');
+    }
+
+    function closePanel() {
+      document.getElementById('side-panel').classList.remove('open');
+    }
+
+    function openAd(brand, analysis) {
+      document.getElementById('modal-title').innerText = brand;
+      document.getElementById('modal-body').innerText = analysis;
+      document.getElementById('ad-modal').style.display = 'flex';
+    }
+
+    function askAI(q) {
+      const chat = document.getElementById('chat-thread');
+      const userMsg = document.createElement('div');
+      userMsg.style.cssText = "background:var(--panel); border:1px solid var(--accent); padding:16px; border-radius:12px; margin-bottom:12px; max-width:80%; margin-left:auto;";
+      userMsg.innerText = q;
+      chat.appendChild(userMsg);
+      document.getElementById('chat-input').value = '';
+      
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.style.cssText = "background:var(--surface); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; max-width:80%;";
+        aiMsg.innerText = "Analyzing live account data... I recommend scaling the budget by 20% on the selected campaign. Performance remains stable.";
+        chat.appendChild(aiMsg);
+        chat.scrollTop = chat.scrollHeight;
+      }, 600);
+    }
+
+    // Init
+    navigate('dashboard');
+  </script>
+</body>
+</html>
