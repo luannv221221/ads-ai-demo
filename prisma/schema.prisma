@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdAccount {
+  id             String          @id
+  name           String
+  account_id     String          @unique
+  account_status Int
+  currency       String
+  timezone_name  String
+  updated_at     DateTime        @default(now())
+  campaigns      Campaign[]
+  insights       DailyInsight[]
+  alerts         AiAlert[]
+
+  @@map("ad_accounts")
+}
+
+model Campaign {
+  id            String         @id
+  name          String
+  status        String
+  ad_account_id String
+  account       AdAccount      @relation(fields: [ad_account_id], references: [id], onDelete: Cascade)
+  insights      DailyInsight[]
+
+  @@map("campaigns")
+}
+
+model DailyInsight {
+  id            Int       @id @default(autoincrement())
+  date          String
+  ad_account_id String
+  campaign_id   String?
+  spend         Decimal   @default(0) @db.Decimal(12, 2)
+  impressions   Int       @default(0)
+  clicks        Int       @default(0)
+  reach         Int       @default(0)
+  results       Json      @default("{}")
+  
+  account       AdAccount @relation(fields: [ad_account_id], references: [id], onDelete: Cascade)
+  campaign      Campaign? @relation(fields: [campaign_id], references: [id], onDelete: Cascade)
+
+  @@unique([date, ad_account_id, campaign_id])
+  @@map("daily_insights")
+}
+
+model AiAlert {
+  id            Int       @id @default(autoincrement())
+  type          String    // danger, warning, success, info
+  title         String
+  message       String?
+  target_id     String?
+  ad_account_id String
+  is_read       Boolean   @default(false)
+  created_at    DateTime  @default(now())
+  
+  account       AdAccount @relation(fields: [ad_account_id], references: [id], onDelete: Cascade)
+
+  @@map("ai_alerts")
+}

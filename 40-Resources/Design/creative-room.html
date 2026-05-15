@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phòng Creative | Ads Manager</title>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <style>
+    :root {
+      /* Light Theme Variables */
+      --bg: #f4f4f5; /* Zinc 100 */
+      --bg-panel: #ffffff; /* White */
+      --bg-surface: #fafafa;
+      --bg-hover: #f4f4f5;
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      
+      --text-main: #09090b; /* Zinc 950 */
+      --text-secondary: #52525b; /* Zinc 600 */
+      --text-muted: #a1a1aa; /* Zinc 400 */
+      
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.1);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --accent: #3b82f6;
+      --accent-bg: rgba(59, 130, 246, 0.1);
+      --purple: #8b5cf6;
+      --purple-bg: rgba(139, 92, 246, 0.1);
+      --pink: #ec4899;
+      --pink-bg: rgba(236, 72, 153, 0.1);
+      
+      --border: #e4e4e7; /* Zinc 200 */
+      --border-light: #f4f4f5;
+      
+      --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-hover: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+      
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Theme Variables - Premium */
+      --bg: #09090b; /* Zinc 950 */
+      --bg-panel: #18181b; /* Zinc 900 */
+      --bg-surface: #27272a; /* Zinc 800 */
+      --bg-hover: #3f3f46;
+      --bg-glass: rgba(24, 24, 27, 0.7);
+      
+      --text-main: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #52525b;
+      
+      --border: #3f3f46;
+      --border-light: #27272a;
+      
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Layout */
+    .sidebar {
+      width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0;
+      transition: var(--transition); z-index: 10;
+    }
+    .main-content {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
+    }
+
+    /* Utilities */
+    .flex { display: flex; }
+    .flex-col { display: flex; flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .w-full { width: 100%; }
+
+    /* Nav Links */
+    .nav-link {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px;
+      color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: var(--transition);
+    }
+    .nav-link:hover { background: var(--bg-surface); color: var(--text-main); }
+    .nav-link.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+
+    /* Header */
+    header {
+      height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between;
+      background-color: var(--bg-glass); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 20;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: var(--transition); border: 1px solid var(--border);
+      background: var(--bg-surface); color: var(--text-main);
+    }
+    .btn:hover { border-color: var(--text-muted); background: var(--bg-hover); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; border: none; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px var(--purple-bg); }
+    .btn-icon { padding: 8px; border-radius: 8px; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
+    .btn-icon:hover { background: var(--bg-surface); color: var(--text-main); }
+
+    /* Workspace Layout */
+    .workspace { display: flex; height: calc(100vh - 72px); overflow: hidden; }
+    
+    /* Left Pane - Inputs */
+    .pane-input {
+      width: 400px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
+      padding: 24px; overflow-y: auto; flex-shrink: 0;
+    }
+    
+    /* Right Pane - AI Output */
+    .pane-output {
+      flex: 1; padding: 32px; overflow-y: auto; background-color: var(--bg);
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    /* Form Elements */
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .form-control {
+      width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text-main); font-size: 14px; transition: var(--transition);
+      font-family: inherit;
+    }
+    .form-control:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-bg); }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    
+    .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .framework-card {
+      padding: 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      background: var(--bg-surface); transition: var(--transition); position: relative;
+    }
+    .framework-card:hover { border-color: var(--text-muted); }
+    .framework-card.active { border-color: var(--purple); background: var(--purple-bg); }
+    .framework-card.active::after {
+      content: ''; position: absolute; top: 12px; right: 12px; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--purple);
+    }
+    .framework-title { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
+    .framework-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+
+    /* AI Chat / Output Cards */
+    .ai-card {
+      background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+      animation: slideUp 0.4s ease-out forwards;
+    }
+    .ai-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+      background: linear-gradient(to bottom, var(--purple), var(--pink));
+    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ai-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .ai-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border-radius: 100px; font-size: 11px; font-weight: 600;
+      background: var(--purple-bg); color: var(--purple);
+    }
+    
+    .copy-content {
+      font-size: 15px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap;
+      padding: 16px; background: var(--bg-surface); border-radius: 8px; border: 1px solid var(--border-light);
+    }
+    
+    .ai-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; background: var(--bg-surface); padding: 4px; border-radius: 10px; margin-bottom: 24px; border: 1px solid var(--border); }
+    .tab {
+      flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: var(--transition);
+    }
+    .tab:hover { color: var(--text-main); }
+    .tab.active { background: var(--bg-panel); color: var(--text-main); box-shadow: var(--shadow); font-weight: 600; }
+
+    /* Empty State */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; text-align: center; color: var(--text-secondary);
+    }
+    .empty-icon { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-title { font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="flex items-center gap-3 mb-10" style="padding: 0 4px;">
+      <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h2 style="font-size: 18px; letter-spacing: -0.03em;">Ads Manager</h2>
+    </div>
+
+    <nav class="flex-col gap-2">
+      <a href="war-room-dashboard.html" class="nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Dashboard
+      </a>
+      <a href="campaign-management.html" class="nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Chiến Dịch
+      </a>
+      <a href="#" class="nav-link active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Phòng Creative
+      </a>
+      <a href="#" class="nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l2-9 5 18 3-13 4 4h4"/></svg>
+        Phân Tích AI
+      </a>
+    </nav>
+    
+    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+      <div class="flex items-center gap-3">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--text-secondary);">MB</div>
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">Chuyên viên Media</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Hiệu suất Nhóm</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header>
+      <div class="flex items-center gap-4">
+        <h1 style="font-size: 22px;">Trợ Lý Creative AI</h1>
+        <div class="flex items-center gap-2" style="background: var(--purple-bg); padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(139, 92, 246, 0.2);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span style="font-size: 12px; font-weight: 600; color: var(--purple);">Copilot Đang Bật</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="btn-icon" title="Chuyển giao diện sáng/tối">
+          <svg id="moonIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg id="sunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      
+      <!-- Input Pane -->
+      <div class="pane-input">
+        <div class="tabs">
+          <div class="tab active" data-target="copywriting">Tạo Copywriting</div>
+          <div class="tab" data-target="competitor">Phân tích Đối thủ</div>
+        </div>
+
+        <!-- Form Copywriting -->
+        <div id="form-copywriting" style="display: flex; flex-direction: column; gap: 20px;">
+
+        <div class="form-group">
+          <label class="form-label">Sản phẩm / Dịch vụ</label>
+          <input type="text" class="form-control" value="Khóa học Tiếng Anh Giao Tiếp 1 kèm 1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Điểm nổi bật (USPs)</label>
+          <textarea class="form-control">Giáo viên bản ngữ, Lộ trình cá nhân hóa, Cam kết đầu ra chứng chỉ, Học trực tuyến linh hoạt.</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Khách hàng mục tiêu (Target Audience)</label>
+          <input type="text" class="form-control" value="Người đi làm, sinh viên năm cuối, 22-35 tuổi">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Giọng điệu (Tone of Voice)</label>
+          <select class="form-control">
+            <option>Chuyên nghiệp, Đáng tin cậy</option>
+            <option>Năng động, Hài hước</option>
+            <option>Cấp bách (FOMO), Đánh vào nỗi đau</option>
+            <option>Gần gũi, Kể chuyện (Storytelling)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Framework</label>
+          <div class="framework-grid">
+            <div class="framework-card active">
+              <div class="framework-title">AIDA</div>
+              <div class="framework-desc">Attention, Interest, Desire, Action. Chuẩn mực, an toàn.</div>
+            </div>
+            <div class="framework-card">
+              <div class="framework-title">PAS</div>
+              <div class="framework-desc">Problem, Agitate, Solve. Đánh mạnh vào nỗi đau.</div>
+            </div>
+            <div class="framework-card">
+              <div class="framework-title">FAB</div>
+              <div class="framework-desc">Features, Ads, Benefits. Nhấn mạnh tính năng sản phẩm.</div>
+            </div>
+            <div class="framework-card">
+              <div class="framework-title">Storytelling</div>
+              <div class="framework-desc">Kể chuyện, review thực tế từ người dùng.</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-full" style="padding: 12px; font-size: 14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Tạo Nội Dung Ngay
+        </button>
+        </div> <!-- End form-copywriting -->
+
+        <!-- Form Competitor -->
+        <div id="form-competitor" style="display: none; flex-direction: column; gap: 20px;">
+          <div style="padding: 12px; background: var(--accent-bg); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
+            <div style="font-size: 12px; color: var(--accent); font-weight: 500; line-height: 1.5;">
+              <strong style="font-weight: 600;">Tính năng Mới:</strong> Nhập Fanpage đối thủ. AI sẽ quét toàn bộ quảng cáo đang chạy (Active Ads) từ Facebook Ad Library để tìm ra các Hook hiệu quả nhất.
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Link Fanpage Đối thủ (Facebook)</label>
+            <input type="text" class="form-control" value="https://facebook.com/trungtamanhngu.example">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Hoặc chọn đối thủ đã lưu</label>
+            <select class="form-control">
+              <option>EnglishCenter ABC (Đang chạy 15 Ads)</option>
+              <option>IELTS DefMaster (Đang chạy 42 Ads)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Khách hàng mục tiêu (Target Audience)</label>
+            <input type="text" class="form-control" value="Người đi làm, sinh viên năm cuối, 22-35 tuổi">
+          </div>
+          <button class="btn btn-primary w-full" style="padding: 12px; font-size: 14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Quét Ad Library & Phân Tích
+          </button>
+        </div> <!-- End form-competitor -->
+      </div>
+
+      <!-- Output Pane -->
+      <div class="pane-output" id="outputPane">
+        
+        <!-- Welcome/Empty State (Hidden when generated) -->
+        <!--
+        <div class="empty-state">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <div class="empty-title">AI Sẵn sàng Sáng tạo</div>
+          <div style="font-size: 14px; max-width: 300px;">Điền thông tin bên trái và nhấn Tạo để nhận các mẫu quảng cáo tối ưu chuyển đổi.</div>
+        </div>
+        -->
+
+        <!-- Result Copywriting -->
+        <div id="result-copywriting" style="display: flex; flex-direction: column; gap: 24px; width: 100%;">
+        <h3 style="font-size: 16px; font-weight: 600;">Kết quả (3 Biến thể AIDA)</h3>
+
+        <!-- Card 1 -->
+        <div class="ai-card">
+          <div class="ai-card-header">
+            <div class="ai-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Biến thể 1 (Tập trung: Lộ trình nhanh)
+            </div>
+            <button class="btn-icon" title="Xóa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+          
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[A] Tiêu đề:</div>
+          <div class="copy-content" style="margin-bottom: 16px; font-weight: 600;">Mất gốc Tiếng Anh 5 năm? Lấy lại tự tin giao tiếp chỉ sau 3 tháng với Phương pháp 1-kèm-1! 🚀</div>
+
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[I] + [D] Nội dung chính:</div>
+          <div class="copy-content" style="margin-bottom: 16px;">
+👉 Sếp yêu cầu báo cáo tiếng Anh nhưng bạn lại phải dùng Google Dịch?
+👉 Bỏ lỡ cơ hội thăng tiến chỉ vì ngại giao tiếp với đối tác nước ngoài?
+
+Đừng lo! Lộ trình "Tiếng Anh Cho Người Đi Làm" được thiết kế RIÊNG BIỆT cho bạn:
+✅ Học 1-kèm-1 với 100% Giáo viên Bản ngữ giàu kinh nghiệm.
+✅ Lộ trình cá nhân hóa - Học đúng trọng tâm ngành nghề của bạn.
+✅ Linh hoạt thời gian: Rảnh lúc nào, book lịch học lúc đó!
+
+Cam kết đầu ra tự tin giao tiếp, phản xạ tự nhiên. Hàng ngàn học viên đã thăng tiến vượt bậc sau khóa học.
+          </div>
+
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[A] Kêu gọi hành động:</div>
+          <div class="copy-content">
+🎁 TẶNG NGAY 1 buổi test trình độ miễn phí và ƯU ĐÃI 30% cho 50 bạn đăng ký trong hôm nay.
+👇 Click "Gửi Tin Nhắn" để nhận lộ trình chi tiết!
+          </div>
+
+          <div class="ai-actions">
+            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Sao chép toàn bộ</button>
+            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Lưu vào Thư viện</button>
+            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Chỉnh sửa</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="ai-card" style="animation-delay: 0.1s;">
+          <div class="ai-card-header">
+            <div class="ai-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              Biến thể 2 (Tập trung: Đầu ra chứng chỉ)
+            </div>
+            <button class="btn-icon" title="Xóa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+          
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[A] Tiêu đề:</div>
+          <div class="copy-content" style="margin-bottom: 16px; font-weight: 600;">Sợ học trước quên sau? Thử ngay phương pháp Tiếng Anh Giao Tiếp 1-kèm-1 cam kết đầu ra bằng văn bản! 🎯</div>
+
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[I] + [D] Nội dung chính:</div>
+          <div class="copy-content" style="margin-bottom: 16px;">
+Học nhiều trung tâm, đổi nhiều phương pháp nhưng vẫn chưa tự tin nói tiếng Anh? 
+
+Với mô hình 1 Thầy - 1 Trò, bạn sẽ được "sửa lỗi tận tay, day tận mặt":
+🔹 Giáo viên bản ngữ 100% chỉnh phát âm chuẩn từng âm tiết.
+🔹 Thực hành giao tiếp liên tục suốt buổi học - Không lý thuyết suông!
+🔹 Lộ trình cá nhân hóa dựa trên bài test đầu vào.
+
+Đặc biệt: Cam kết hoàn tiền hoặc đào tạo lại miễn phí nếu không đạt chứng chỉ/mục tiêu đầu ra như hợp đồng.
+          </div>
+
+          <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[A] Kêu gọi hành động:</div>
+          <div class="copy-content">
+🔥 Chỉ còn 15 suất học bổng giảm 20% cho tháng này.
+👉 Để lại [SĐT] hoặc nhắn tin cho page để chuyên viên tư vấn lộ trình học phù hợp nhất với bạn!
+          </div>
+
+          <div class="ai-actions">
+            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Sao chép toàn bộ</button>
+            <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Lưu vào Thư viện</button>
+          </div>
+        </div>
+
+        </div> <!-- End result-copywriting -->
+
+        <!-- Result Competitor -->
+        <div id="result-competitor" style="display: none; flex-direction: column; gap: 24px; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 16px; font-weight: 600;">Dữ liệu quét từ Facebook Ad Library</h3>
+            <div style="font-size: 12px; color: var(--text-muted);">Cập nhật 5 phút trước</div>
+          </div>
+
+          <!-- Metrics Overview -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; transition: var(--transition); cursor: default;" onmouseover="this.style.borderColor='var(--text-muted)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size: 24px; font-weight: 700; color: var(--accent);">15</div>
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">Quảng cáo đang chạy</div>
+            </div>
+            <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; transition: var(--transition); cursor: default;" onmouseover="this.style.borderColor='var(--text-muted)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size: 24px; font-weight: 700; color: var(--success);">80%</div>
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">Dạng Hình ảnh (Image)</div>
+            </div>
+            <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; transition: var(--transition); cursor: default;" onmouseover="this.style.borderColor='var(--text-muted)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size: 24px; font-weight: 700; color: var(--purple);">FB & IG</div>
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">Nền tảng chính</div>
+            </div>
+          </div>
+
+          <!-- Top Active Ads Snippets -->
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 12px;">Các Mẫu Quảng Cáo Đang Chạy (Top Active Ads)</div>
+            <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+              <!-- Ad 1 -->
+              <div style="min-width: 260px; max-width: 260px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-panel); overflow: hidden; box-shadow: var(--shadow);">
+                <div style="height: 120px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-secondary); position: relative;">
+                  [Ảnh Thumbnail QC 1]
+                  <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500;">Chạy từ 12/05</div>
+                </div>
+                <div style="padding: 12px; font-size: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500;">
+                  "🔥 HỌC TIẾNG ANH GIAO TIẾP VỚI TÂY BALÔ CHỈ TỪ 99K/BUỔI! Đăng ký ngay hôm nay để nhận ưu đãi giảm 50% học phí..."
+                </div>
+                <div style="padding: 8px 12px; background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary);">
+                  <span title="Chỉ số tương tác công khai (Likes/Comments)"><strong style="color: var(--text-main);">1.2K</strong> Tương tác</span>
+                  <span title="Dự đoán hiệu suất dựa trên thời gian chạy" style="color: var(--success); font-weight: 600;">🔥 Winning Ad</span>
+                </div>
+              </div>
+              <!-- Ad 2 -->
+              <div style="min-width: 260px; max-width: 260px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-panel); overflow: hidden; box-shadow: var(--shadow);">
+                <div style="height: 120px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-secondary); position: relative;">
+                  [Ảnh Thumbnail QC 2]
+                  <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500;">Chạy từ 15/05</div>
+                </div>
+                <div style="padding: 12px; font-size: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500;">
+                  "Bạn sợ học tiếng Anh? Đừng lo vì đã có phương pháp học bằng tiềm thức mới nhất năm 2024. Miễn phí test đầu vào..."
+                </div>
+                <div style="padding: 8px 12px; background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary);">
+                  <span title="Chỉ số tương tác công khai (Likes/Comments)"><strong style="color: var(--text-main);">856</strong> Tương tác</span>
+                  <span title="Dự đoán hiệu suất dựa trên thời gian chạy" style="color: var(--success); font-weight: 600;">🔥 Winning Ad</span>
+                </div>
+              </div>
+              <!-- Ad 3 -->
+              <div style="min-width: 260px; max-width: 260px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-panel); overflow: hidden; box-shadow: var(--shadow);">
+                <div style="height: 120px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-secondary); position: relative;">
+                  [Video Thumbnail QC 3]
+                  <div style="position: absolute; top: 8px; right: 8px; background: var(--purple); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500;">Video Ad</div>
+                </div>
+                <div style="padding: 12px; font-size: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500;">
+                  "Cùng xem lớp học tiếng Anh giao tiếp siêu vui nhộn của chúng mình có gì nhé. Các bạn học viên đều rất hào hứng..."
+                </div>
+                <div style="padding: 8px 12px; background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary);">
+                  <span title="Chỉ số tương tác công khai (Likes/Comments)"><strong style="color: var(--text-main);">2.4K</strong> Tương tác</span>
+                  <span title="Quảng cáo mới, đang testing" style="color: var(--warning); font-weight: 600;">⏱️ Đang Test</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Analysis Card -->
+          <div class="ai-card" style="margin-top: 8px;">
+            <div class="ai-card-header">
+              <div class="ai-badge" style="background: var(--warning-bg); color: var(--warning);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Phân Tích Tổng Quan (EnglishCenter ABC)
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[🔍] Các Hook Phổ Biến Nhất:</div>
+            <div class="copy-content" style="margin-bottom: 16px; font-weight: 500; border-left: 3px solid var(--warning);">
+• 60% Ads: Nhấn mạnh yếu tố "Học phí rẻ" và "Giảm giá 50%".
+• 40% Ads: Sử dụng hình ảnh "Tây balô" để chứng minh có giáo viên nước ngoài.
+            </div>
+
+            <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">[⚠️] Lỗ Hổng Khai Thác (Cơ hội cho bạn):</div>
+            <div class="copy-content" style="margin-bottom: 16px;">
+• Không có cam kết đầu ra bằng văn bản.
+• Giáo viên không có chứng chỉ sư phạm rõ ràng.
+• Hình ảnh tập trung vào lớp đông người, thiếu tính cá nhân hóa.
+            </div>
+          </div>
+
+          <h3 style="font-size: 16px; font-weight: 600;">Gợi ý 3 Góc Tiếp Cận (Angles) Mới</h3>
+
+          <div class="ai-card" style="animation-delay: 0.1s;">
+            <div class="ai-card-header">
+              <div class="ai-badge" style="background: var(--success-bg); color: var(--success);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Angle 1: Đánh vào Chất lượng Giáo viên
+              </div>
+            </div>
+            <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Hook Gợi ý:</div>
+            <div class="copy-content" style="font-weight: 600; margin-bottom: 16px;">Học tiếng Anh với "Tây balô" - Mất tiền oan hay hiệu quả thực sự? Đừng đánh cược thời gian của bạn, hãy chọn giáo viên có chứng chỉ TESOL!</div>
+            <div class="ai-actions">
+              <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Viết Bài Từ Hook Này</button>
+            </div>
+          </div>
+          
+          <div class="ai-card" style="animation-delay: 0.2s;">
+            <div class="ai-card-header">
+              <div class="ai-badge" style="background: var(--success-bg); color: var(--success);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Angle 2: Đánh vào Cam kết Đầu ra
+              </div>
+            </div>
+            <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary);">Hook Gợi ý:</div>
+            <div class="copy-content" style="font-weight: 600; margin-bottom: 16px;">Học tiếng Anh giao tiếp không có cam kết đầu ra bằng văn bản? Đừng đăng ký! Lộ trình 1-kèm-1 của chúng tôi hoàn tiền 100% nếu bạn không tự tin trò chuyện với đối tác nước ngoài.</div>
+            <div class="ai-actions">
+              <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Viết Bài Từ Hook Này</button>
+            </div>
+          </div>
+
+        </div> <!-- End result-competitor -->
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Theme Script -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlEl = document.documentElement;
+    const moonIcon = document.getElementById('moonIcon');
+    const sunIcon = document.getElementById('sunIcon');
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = htmlEl.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        htmlEl.setAttribute('data-theme', 'light');
+        moonIcon.style.display = 'block';
+        sunIcon.style.display = 'none';
+      } else {
+        htmlEl.setAttribute('data-theme', 'dark');
+        moonIcon.style.display = 'none';
+        sunIcon.style.display = 'block';
+      }
+    });
+
+    // Framework card selection
+    document.querySelectorAll('.framework-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.framework-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    });
+
+    // Tab selection
+    const tabs = document.querySelectorAll('.tab');
+    const formCopywriting = document.getElementById('form-copywriting');
+    const formCompetitor = document.getElementById('form-competitor');
+    const resultCopywriting = document.getElementById('result-copywriting');
+    const resultCompetitor = document.getElementById('result-competitor');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        if (tab.getAttribute('data-target') === 'copywriting') {
+          formCopywriting.style.display = 'flex';
+          formCompetitor.style.display = 'none';
+          resultCopywriting.style.display = 'flex';
+          resultCompetitor.style.display = 'none';
+        } else {
+          formCopywriting.style.display = 'none';
+          formCompetitor.style.display = 'flex';
+          resultCopywriting.style.display = 'none';
+          resultCompetitor.style.display = 'flex';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
