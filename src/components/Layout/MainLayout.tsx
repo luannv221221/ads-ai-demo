@@ -13,6 +13,9 @@ interface MainLayoutProps {
   onRefresh?: () => void;
   isRefreshing?: boolean;
   onDateChange?: (range: string) => void;
+  accounts?: any[];
+  selectedAccountId?: string;
+  onAccountChange?: (accountId: string) => void;
 }
 
 export default function MainLayout({ 
@@ -22,7 +25,10 @@ export default function MainLayout({
   rightSidebarContent,
   onRefresh,
   isRefreshing,
-  onDateChange
+  onDateChange,
+  accounts = [],
+  selectedAccountId = 'all',
+  onAccountChange
 }: MainLayoutProps) {
   return (
     <div className={styles.layout}>
@@ -34,6 +40,9 @@ export default function MainLayout({
           onRefresh={onRefresh} 
           isRefreshing={isRefreshing} 
           onDateChange={onDateChange}
+          accounts={accounts}
+          selectedAccountId={selectedAccountId}
+          onAccountChange={onAccountChange}
         />
         <main className={styles.content}>
           {children}

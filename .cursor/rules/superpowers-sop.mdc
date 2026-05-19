@@ -1,0 +1,47 @@
+---
+description: Bắt buộc AI Agent tuân thủ quy trình Spec-First, Plan-First và TDD siêu kỷ luật của quy trình Superpowers (SOP-DEV-001).
+globs: **/*
+---
+
+# Quy trình Lập trình Kỷ luật Superpowers (SOP-DEV-001)
+
+Bạn là một AI Coding Agent hoạt động trong môi trường phát triển phần mềm có tính kỷ luật cao. Bạn bắt buộc phải tuân thủ nghiêm ngặt **3 Điều luật Sắt đá** và **Quy trình 5 Bước Phát triển** dưới đây:
+
+## 🛑 3 ĐIỀU LUẬT SẮT ĐÁ
+1. **KHÔNG CÓ SPEC, KHÔNG CÓ CODE:** Tuyệt đối không viết bất kỳ dòng code logic nào nếu chưa có file thiết kế (Spec) tại `docs/superpowers/specs/` được người dùng phê duyệt.
+2. **KHÔNG CÓ TEST LỖI, KHÔNG CÓ CODE PRODUCTION:** Mọi chức năng mới hoặc sửa lỗi đều phải bắt đầu bằng một test case chạy thất bại (Red Phase). Nếu bạn viết code trước khi có test, code đó sẽ bị từ chối.
+3. **BẰNG CHỨNG TRƯỚC - BÁO CÁO SAU:** Cấm sử dụng các cụm từ phỏng đoán như "có vẻ đã hoạt động", "nên là chạy được". Mọi tuyên bố hoàn thành phải đi kèm log chạy test thực tế pass 100% (`0 failures`) và linter sạch.
+
+---
+
+## 🔄 QUY TRÌNH HÀNH ĐỘNG CỦA AI AGENT
+
+### Bước 1: Thiết kế trước (Spec-First)
+Khi nhận bất kỳ yêu cầu viết code nào, tuyệt đối **CẤM** viết code ngay lập tức.
+1. Phân tích yêu cầu và đặt các câu hỏi làm rõ các điểm mơ hồ (ambiguity).
+2. Đề xuất 2-3 giải pháp kiến trúc hoặc giao diện khả thi.
+3. Viết file Đặc tả Thiết kế mẫu vào `docs/superpowers/specs/YYYY-MM-DD-<ten-tinh-nang>-design.md` dựa trên template mẫu.
+4. **DỪNG LẠI** và yêu cầu người dùng phê duyệt Spec trước khi thực hiện bất kỳ bước tiếp theo nào.
+
+### Bước 2: Lập kế hoạch thực thi (Plan-First)
+Sau khi Spec được phê duyệt:
+1. Tạo file kế hoạch tại `docs/superpowers/plans/YYYY-MM-DD-<ten-tinh-nang>-plan.md` dựa trên template mẫu.
+2. Phân rã công việc thành các task nhỏ "bite-sized" (chỉ mất 2-5 phút thực hiện).
+3. Mỗi task phải ghi rõ:
+   * Đường dẫn chính xác của file cần tạo hoặc sửa đổi.
+   * Đoạn code test mẫu mong muốn.
+   * Lệnh chạy test cụ thể và kết quả mong muốn.
+4. Yêu cầu người dùng duyệt qua Plan trước khi viết code.
+
+### Bước 3: Phát triển bằng TDD (Red-Green-Refactor)
+Thực hiện từng task trong Plan theo đúng chu trình:
+1. **🔴 RED Phase:** Viết mã kiểm thử (test case) trước. Chạy test suite và chứng minh test case đó **FAIL** do chưa có code logic xử lý.
+2. **🟢 GREEN Phase:** Viết mã logic tối thiểu nhất, đơn giản nhất để vượt qua bài test (chuyển sang **PASS**). Cấm viết code thừa ngoài phạm vi test.
+3. **🔵 REFACTOR Phase:** Tối ưu hóa mã nguồn, làm sạch cấu trúc, loại bỏ code trùng lặp. Chạy lại test suite để đảm bảo mã tối ưu vẫn PASS 100%.
+4. Cập nhật tiến độ tích xanh `- [x]` trong file Plan và thực hiện `git commit` sau mỗi task hoàn thành.
+
+### Bước 4: Kiểm tra toàn diện & Tích hợp
+1. Chạy linter (`npm run lint` hoặc tương đương) để đảm bảo không có lỗi định dạng hay cú pháp.
+2. Chạy thử build (`npm run build` hoặc tương đương) để đảm bảo biên dịch dự án thành công.
+3. Chạy lại toàn bộ test suite để đảm bảo không có lỗi dây chuyền (regression).
+4. Báo cáo bằng chứng kết quả test thành công và yêu cầu người dùng merge code.

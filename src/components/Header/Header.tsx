@@ -8,9 +8,20 @@ interface HeaderProps {
   onRefresh?: () => void;
   isRefreshing?: boolean;
   onDateChange?: (range: string) => void;
+  accounts?: any[];
+  selectedAccountId?: string;
+  onAccountChange?: (accountId: string) => void;
 }
 
-export default function Header({ title, onRefresh, isRefreshing, onDateChange }: HeaderProps) {
+export default function Header({ 
+  title, 
+  onRefresh, 
+  isRefreshing, 
+  onDateChange,
+  accounts = [],
+  selectedAccountId = 'all',
+  onAccountChange
+}: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.titleArea}>
@@ -24,6 +35,24 @@ export default function Header({ title, onRefresh, isRefreshing, onDateChange }:
       </div>
       
       <div className={styles.actions}>
+        {accounts.length > 0 && (
+          <div className={styles.selectWrapper}>
+            <span className={styles.inputLabel}>Tài Khoản</span>
+            <select 
+              className={styles.accountSelect} 
+              value={selectedAccountId}
+              onChange={(e) => onAccountChange?.(e.target.value)}
+            >
+              <option value="all" style={{ background: '#18181b', color: '#fff' }}>🌐 Tất cả tài khoản</option>
+              {accounts.map((acc: any) => (
+                <option key={acc.id} value={acc.id} style={{ background: '#18181b', color: '#fff' }}>
+                  {acc.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className={styles.datePickerGroup}>
           <div className={styles.inputWrapper}>
             <span className={styles.inputLabel}>Từ</span>

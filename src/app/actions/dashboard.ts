@@ -50,7 +50,7 @@ export async function getDashboardStats(range: string = 'today', startDate?: str
       
       console.log(`--- Fetching from ${start} to ${end} [Account: ${adAccountId || 'all'}]. Found ${data?.length || 0} rows. ---`);
       
-      return (data || []).reduce((acc, curr) => {
+      return (data || []).reduce((acc: any, curr: any) => {
         const results = typeof curr.results === 'string' ? JSON.parse(curr.results) : (curr.results || []);
         const getActionValue = (type: string) => {
           const action = results.find((a: any) => a.action_type === type);
@@ -113,3 +113,241 @@ export async function getDashboardStats(range: string = 'today', startDate?: str
     return { success: false, error: error.message };
   }
 }
+
+export async function getAdAccounts() {
+  try {
+    const { data, error } = await supabase
+      .from('ad_accounts')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) throw error;
+    return { success: true, data: data || [] };
+  } catch (error: any) {
+    console.error('Error fetching ad accounts:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getRealCampaignsData(adAccountId: string, startDate?: string, endDate?: string) {
+  try {
+    const accessToken = process.env.FB_ACCESS_TOKEN;
+    if (!accessToken) {
+      console.warn('FB_ACCESS_TOKEN not set, falling back to mock.');
+      return { success: true, data: null, isMock: true };
+    }
+
+    const FacebookAdsSDK = require('facebook-nodejs-business-sdk');
+    const { FacebookAdsApi, AdAccount } = FacebookAdsSDK;
+    FacebookAdsApi.init(accessToken);
+
+    let targetAccountId = adAccountId;
+    
+    if (!targetAccountId || targetAccountId === 'all') {
+      // Prioritize act_1145991459997754 (Mankai3) as the default account since it has rich campaign history
+      targetAccountId = 'act_1145991459997754';
+    }
+
+    if (!targetAccountId.startsWith('act_')) {
+      targetAccountId = 'act_' + targetAccountId;
+    }
+
+    console.log(`[getRealCampaignsData] Fetching for ${targetAccountId} with date range: ${startDate} to ${endDate}...`);
+    const adAccount = new AdAccount(targetAccountId);
+    
+    let timeRangeStr = 'date_preset(last_90d)';
+    if (startDate && endDate && /^\d{4}-\d{2}-\d{2}$/.test(startDate) && /^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+      timeRangeStr = `time_range({"since":"${startDate}","until":"${endDate}"})`;
+    }
+
+    const campaigns = await adAccount.getCampaigns([
+      'id',
+      'name',
+      'objective',
+      'status',
+      'effective_status',
+      'daily_budget',
+      'lifetime_budget',
+      `insights.${timeRangeStr}{spend,impressions,clicks,reach,cpm,actions}`,
+      `adsets{id,name,status,effective_status,insights.${timeRangeStr}{spend,impressions,clicks,reach,cpm,actions},ads{id,name,status,effective_status,insights.${timeRangeStr}{spend,impressions,clicks,reach,cpm,actions}}}`
+    ], {
+      limit: 15
+    });
+
+    if (!campaigns || campaigns.length === 0) {
+      console.log('No campaigns found for account, fallback to mock.');
+      return { success: true, data: null, isMock: true };
+    }
+
+    const mappedCampaigns = campaigns.map((camp: any) => {
+      const cData = camp._data;
+      const cInsights = cData.insights?.data?.[0] || { spend: 0, impressions: 0, clicks: 0, reach: 0 };
+      
+      const getActionValue = (insightsObj: any, type: string) => {
+        const actions = insightsObj.actions || [];
+        const action = actions.find((a: any) => a.action_type === type);
+        return action ? parseInt(action.value || 0) : 0;
+      };
+
+      const cSpend = parseFloat(cInsights.spend || 0);
+      const cPurchases = getActionValue(cInsights, 'purchase');
+      const cMsgs = getActionValue(cInsights, 'onsite_conversion.messaging_conversation_started_7d');
+      const cObj = cData.objective?.toLowerCase() || 'website';
+      const isWeb = cObj.includes('sales') || cObj.includes('conversions') || cObj.includes('website') || cObj.includes('leads');
+
+      const cImps = parseInt(cInsights.impressions || 0);
+      const cConvs = isWeb ? cPurchases : cMsgs;
+      const cCpm = parseFloat(cInsights.cpm || (cImps > 0 ? (cSpend / cImps) * 1000 : 45000));
+
+      let cCpa = 0;
+      let cMetricType = 'CPA';
+      let cPerf = '0x ROAS';
+      
+      if (isWeb) {
+        cCpa = cPurchases > 0 ? cSpend / cPurchases : 0;
+        const rev = cPurchases * 500000;
+        const roas = cSpend > 0 ? (rev / cSpend) : 0;
+        cPerf = roas > 0 ? `${roas.toFixed(1)}x ROAS` : '0.0x ROAS';
+      } else {
+        cCpa = cMsgs > 0 ? cSpend / cMsgs : 0;
+        cMetricType = 'CPM';
+        const rate = cMsgs > 0 && cInsights.clicks > 0 ? (cMsgs / cInsights.clicks) * 100 : 15;
+        cPerf = `${rate.toFixed(1)}% Xin Số`;
+      }
+
+      let cStatus = 'watch';
+      let cStatusLabel = 'Đang Theo Dõi';
+      
+      if (cData.status === 'ACTIVE' || cData.effective_status === 'ACTIVE') {
+        if (isWeb) {
+          const roasVal = cSpend > 0 ? (cPurchases * 500000 / cSpend) : 0;
+          if (roasVal > 2.5) {
+            cStatus = 'scale';
+            cStatusLabel = 'Đang Vít (Scale)';
+          } else if (roasVal > 1.2) {
+            cStatus = 'active';
+            cStatusLabel = 'Active';
+          } else {
+            cStatus = 'kill';
+            cStatusLabel = 'Sắp Tắt (Kill)';
+          }
+        } else {
+          cStatus = 'active';
+          cStatusLabel = 'Active';
+        }
+      } else {
+        cStatus = 'paused';
+        cStatusLabel = 'Paused';
+      }
+
+      const adSetsData = cData.adsets?.data || [];
+      const mappedAdSets = adSetsData.map((adset: any) => {
+        const asInsights = adset.insights?.data?.[0] || { spend: 0, impressions: 0, clicks: 0 };
+        const asSpend = parseFloat(asInsights.spend || 0);
+        const asPurchases = getActionValue(asInsights, 'purchase');
+        const asMsgs = getActionValue(asInsights, 'onsite_conversion.messaging_conversation_started_7d');
+        
+        let asCpa = 0;
+        let asPerf = '0x ROAS';
+        if (isWeb) {
+          asCpa = asPurchases > 0 ? asSpend / asPurchases : 0;
+          const roas = asSpend > 0 ? (asPurchases * 500000 / asSpend) : 0;
+          asPerf = roas > 0 ? `${roas.toFixed(1)}x ROAS` : '0.0x ROAS';
+        } else {
+          asCpa = asMsgs > 0 ? asSpend / asMsgs : 0;
+          const rate = asMsgs > 0 && asInsights.clicks > 0 ? (asMsgs / asInsights.clicks) * 100 : 15;
+          asPerf = `${rate.toFixed(1)}% Xin Số`;
+        }
+
+        let asStatus = 'active';
+        let asStatusLabel = 'Active';
+        if (adset.status === 'PAUSED' || adset.effective_status === 'PAUSED') {
+          asStatus = 'paused';
+          asStatusLabel = 'Paused';
+        }
+
+        const adsData = adset.ads?.data || [];
+        const mappedAds = adsData.map((ad: any) => {
+          const adInsights = ad.insights?.data?.[0] || { spend: 0, impressions: 0, clicks: 0 };
+          const adSpend = parseFloat(adInsights.spend || 0);
+          const adPurchases = getActionValue(adInsights, 'purchase');
+          const adMsgs = getActionValue(adInsights, 'onsite_conversion.messaging_conversation_started_7d');
+          
+          let adCpa = 0;
+          let adPerf = '0x ROAS';
+          if (isWeb) {
+            adCpa = adPurchases > 0 ? adSpend / adPurchases : 0;
+            const roas = adSpend > 0 ? (adPurchases * 500000 / adSpend) : 0;
+            adPerf = roas > 0 ? `${roas.toFixed(1)}x ROAS` : '0.0x ROAS';
+          } else {
+            adCpa = adMsgs > 0 ? adSpend / adMsgs : 0;
+            const rate = adMsgs > 0 && adInsights.clicks > 0 ? (adMsgs / adInsights.clicks) * 100 : 15;
+            adPerf = `${rate.toFixed(1)}% Xin Số`;
+          }
+
+          let adStatus = 'active';
+          let adStatusLabel = 'Active';
+          if (ad.status === 'PAUSED' || ad.effective_status === 'PAUSED') {
+            adStatus = 'paused';
+            adStatusLabel = 'Paused';
+          } else if (isWeb && adSpend > 0 && (adPurchases * 500000 / adSpend) > 3.0) {
+            adStatus = 'winning';
+            adStatusLabel = 'Winning';
+          }
+
+          const video3s = getActionValue(adInsights, 'video_view');
+          const hook = adInsights.impressions > 0 ? (video3s / adInsights.impressions) * 100 : 25;
+
+          return {
+            id: ad.id,
+            name: ad.name,
+            spend: adSpend,
+            cpa: adCpa,
+            metricType: isWeb ? 'CPA' : 'CPM',
+            performance: adPerf,
+            hookRate: `Hook: ${hook.toFixed(0)}%`,
+            status: adStatus,
+            statusLabel: adStatusLabel
+          };
+        });
+
+        return {
+          id: adset.id,
+          name: adset.name,
+          spend: asSpend,
+          cpa: asCpa,
+          metricType: isWeb ? 'CPA' : 'CPM',
+          performance: asPerf,
+          status: asStatus,
+          statusLabel: asStatusLabel,
+          ads: mappedAds
+        };
+      });
+
+      const cBudget = parseInt(cData.daily_budget || cData.lifetime_budget || 0);
+
+      return {
+        id: cData.id,
+        name: cData.name,
+        objective: isWeb ? 'website' : 'messenger',
+        spend: cSpend,
+        cpa: cCpa,
+        cpm: cCpm,
+        metricType: cMetricType,
+        performance: cPerf,
+        status: cStatus,
+        statusLabel: cStatusLabel,
+        budget: cBudget,
+        impressions: cImps,
+        conversions: cConvs,
+        adSets: mappedAdSets
+      };
+    });
+
+    return { success: true, data: mappedCampaigns, isMock: false };
+  } catch (error: any) {
+    console.error('Error fetching real campaigns data:', error);
+    return { success: true, data: null, isMock: true, error: error.message };
+  }
+}
+
