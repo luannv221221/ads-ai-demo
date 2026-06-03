@@ -99,6 +99,13 @@
   color: var(--text-main);
 }
 
+/* Delete / Danger button */
+.btnDanger:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 /* Grid Panel */
 .panel {
   background: var(--bg-panel);
@@ -457,4 +464,102 @@
   padding: 0;
   overflow-y: auto;
   flex: 1;
+}
+
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  text-align: center;
+  min-height: 360px;
+  gap: 20px;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.emptyStateIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.emptyStateIconPrimary {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.emptyStateIconMuted {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.emptyStateTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.emptyStateDescription {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.emptyStateAction {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.emptyStateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-decoration: none;
+}
+
+.emptyStateBtnPrimary {
+  background: var(--text-main);
+  color: var(--bg);
+}
+
+.emptyStateBtnPrimary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.emptyStateBtnSecondary {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.emptyStateBtnSecondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FeedbackState } from '@/components/ui/FeedbackState';
 import MainLayout from '@/components/Layout/MainLayout';
 import styles from './campaigns.module.css';
 import { getAdAccounts } from '@/app/actions/dashboard';
@@ -13,7 +14,8 @@ import {
   duplicateCampaign, 
   createCampaign, 
   getCampaignDailyPerformance,
-  saveAutomatedRule 
+  saveAutomatedRule,
+  deleteCampaign
 } from '@/app/actions/campaigns';
 
 export default function CampaignsPage() {
@@ -251,6 +253,26 @@ export default function CampaignsPage() {
     }
   };
 
+  // Delete action
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa chiến dịch "${name}"? Hành động này không thể hoàn tác.`)) {
+      return;
+    }
+
+    // Optimistic UI update - remove immediately
+    setCampaigns(prev => prev.filter(c => c.id !== id));
+    setSelectedIds(prev => prev.filter(item => item !== id));
+
+    showToast('Đang xóa chiến dịch...', 'info');
+    const result: any = await deleteCampaign(id);
+    if (result.success) {
+      showToast('Đã xóa chiến dịch thành công!');
+    } else {
+      showToast('Lỗi xóa chiến dịch: ' + result.error, 'error');
+      setRefreshKey(prev => prev + 1); // roll back
+    }
+  };
+
   // Bulk actions handlers
   const handleBulkToggle = async (status: 'ACTIVE' | 'PAUSED') => {
     showToast(`Đang cập nhật trạng thái ${selectedIds.length} chiến dịch...`, 'info');
@@ -476,19 +498,81 @@ export default function CampaignsPage() {
                   <th className={styles.th}>CPM</th>
                   <th className={styles.th}>CPA</th>
                   <th className={styles.th}>ROAS / Hiệu Suất</th>
+                  <th className={styles.th} style={{ width: '70px' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-                      Đang kết nối Facebook Ads Server...
+                    <td colSpan={10}>
+                      <FeedbackState tone="info" title="Đang tải dữ liệu..." description="Hệ thống đang lấy dữ liệu mới nhất từ Meta." />
+                    </td>
+                  </tr>
+                ) : campaigns.length === 0 ? (
+                  <tr>
+                    <td colSpan={10}>
+                      <div className={styles.emptyState}>
+                        <div className={`${styles.emptyStateIcon} ${styles.emptyStateIconPrimary}`}>
+                          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                          </svg>
+                        </div>
+                        <h3 className={styles.emptyStateTitle}>Chưa có chiến dịch nào</h3>
+                        <p className={styles.emptyStateDescription}>
+                          Tạo chiến dịch quảng cáo đầu tiên để bắt đầu tiếp cận khách hàng trên Facebook và theo dõi hiệu suất ngay tại đây.
+                        </p>
+                        <div className={styles.emptyStateAction}>
+                          <button 
+                            className={`${styles.emptyStateBtn} ${styles.emptyStateBtnPrimary}`}
+                            onClick={() => setIsCreateModalOpen(true)}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Tạo Chiến Dịch Đầu Tiên
+                          </button>
+                          <button 
+                            className={`${styles.emptyStateBtn} ${styles.emptyStateBtnSecondary}`}
+                            onClick={handleRefresh}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                            </svg>
+                            Đồng Bộ Meta
+                          </button>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ) : filteredCampaigns.length === 0 ? (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
-                      Không có chiến dịch nào được tìm thấy.
+                    <td colSpan={10}>
+                      <div className={styles.emptyState}>
+                        <div className={`${styles.emptyStateIcon} ${styles.emptyStateIconMuted}`}>
+                          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                          </svg>
+                        </div>
+                        <h3 className={styles.emptyStateTitle}>Không tìm thấy kết quả</h3>
+                        <p className={styles.emptyStateDescription}>
+                          Không có chiến dịch nào khớp với bộ lọc hiện tại. Thử thay đổi tiêu chí lọc hoặc từ khóa tìm kiếm.
+                        </p>
+                        <div className={styles.emptyStateAction}>
+                          <button 
+                            className={`${styles.emptyStateBtn} ${styles.emptyStateBtnSecondary}`}
+                            onClick={() => {
+                              setSearchQuery('');
+                              setFilterObjective('all');
+                              setFilterStatus('all');
+                            }}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Xóa Bộ Lọc
+                          </button>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -577,6 +661,24 @@ export default function CampaignsPage() {
                             {c.performance}
                           </span>
                         </td>
+                      <td className={styles.td}>
+                        <button
+                          className={`${styles.btnIcon} ${styles.btnDanger}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(c.id, c.name);
+                          }}
+                          title="Xóa chiến dịch"
+                          style={{ color: 'var(--danger)' }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            <line x1="10" y1="11" x2="10" y2="17" />
+                            <line x1="14" y1="11" x2="14" y2="17" />
+                          </svg>
+                        </button>
+                      </td>
                       </tr>
                     );
                   })
