@@ -3,33 +3,33 @@ import type { FrameworkOption, SavedCompetitorOption } from './types';
 export const CREATIVE_LIBRARY_KEY = 'ads-manager:creative-library';
 
 export const DEFAULT_COPY_FORM = {
-  product: 'Khoa hoc Tieng Anh Giao Tiep 1 kem 1',
-  usps: 'Giao vien ban ngu co chung chi, Lo trinh ca nhan hoa, Cam ket dau ra bang van ban, Hoc truc tuyen linh hoat.',
-  audience: 'Nguoi di lam, sinh vien nam cuoi, 22-35 tuoi',
-  tone: 'Chuyen nghiep, Dang tin cay',
+  product: 'Khóa học Tiếng Anh Giao Tiếp 1 kèm 1',
+  usps: 'Giáo viên bản ngữ có chứng chỉ, lộ trình cá nhân hóa, cam kết đầu ra bằng văn bản, học trực tuyến linh hoạt.',
+  audience: 'Người đi làm, sinh viên năm cuối, 22-35 tuổi',
+  tone: 'Chuyên nghiệp, đáng tin cậy',
   framework: 'AIDA',
 };
 
 export const DEFAULT_COMPETITOR_FORM = {
   competitorUrl: 'https://facebook.com/trungtamanhngu.example',
-  savedCompetitor: 'EnglishCenter ABC (Dang chay 15 Ads)',
+  savedCompetitor: 'EnglishCenter ABC (đang chạy 15 Ads)',
   competitorAudience: DEFAULT_COPY_FORM.audience,
 };
 
 export const CUSTOM_COMPETITOR_LABEL = 'Custom URL';
 
 export const TONE_OPTIONS = [
-  'Chuyen nghiep, Dang tin cay',
-  'Nang dong, Hai huoc',
-  'Cap bach (FOMO), Danh vao noi dau',
-  'Gan gui, Ke chuyen (Storytelling)',
+  'Chuyên nghiệp, đáng tin cậy',
+  'Năng động, hài hước',
+  'Cấp bách (FOMO), đánh vào nỗi đau',
+  'Gần gũi, kể chuyện (Storytelling)',
 ];
 
 export const FRAMEWORK_OPTIONS: FrameworkOption[] = [
-  { id: 'AIDA', name: 'AIDA', desc: 'Attention, Interest, Desire, Action. Chuan muc, an toan.' },
-  { id: 'PAS', name: 'PAS', desc: 'Problem, Agitate, Solve. Danh manh vao noi dau.' },
-  { id: 'FAB', name: 'FAB', desc: 'Features, Advantages, Benefits. Nhan manh tinh nang san pham.' },
-  { id: 'Storytelling', name: 'Storytelling', desc: 'Ke chuyen, review thuc te tu nguoi dung.' },
+  { id: 'AIDA', name: 'AIDA', desc: 'Attention, Interest, Desire, Action. Chuẩn mực, an toàn.' },
+  { id: 'PAS', name: 'PAS', desc: 'Problem, Agitate, Solve. Đánh mạnh vào nỗi đau.' },
+  { id: 'FAB', name: 'FAB', desc: 'Features, Advantages, Benefits. Nhấn mạnh tính năng sản phẩm.' },
+  { id: 'Storytelling', name: 'Storytelling', desc: 'Kể chuyện, review thực tế từ người dùng.' },
 ];
 
 export const SAVED_COMPETITORS: SavedCompetitorOption[] = [
@@ -39,11 +39,11 @@ export const SAVED_COMPETITORS: SavedCompetitorOption[] = [
     isCustom: true,
   },
   {
-    label: 'EnglishCenter ABC (Dang chay 15 Ads)',
+    label: 'EnglishCenter ABC (đang chạy 15 Ads)',
     url: 'https://facebook.com/trungtamanhngu.example',
   },
   {
-    label: 'IELTS DefMaster (Dang chay 42 Ads)',
+    label: 'IELTS DefMaster (đang chạy 42 Ads)',
     url: 'https://facebook.com/ielts.master.example',
   },
 ];

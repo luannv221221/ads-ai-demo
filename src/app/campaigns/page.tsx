@@ -14,6 +14,13 @@ import {
   getCampaignDailyPerformance,
   saveAutomatedRule 
 } from '@/app/actions/campaigns';
+import { createLastDaysDateRange, type DateRange } from '@/lib/dateRange';
+
+interface AdAccountSummary {
+  id: string;
+  name?: string;
+  account_id?: string;
+}
 
 export default function CampaignsPage() {
   const [loading, setLoading] = useState(true);
@@ -21,12 +28,9 @@ export default function CampaignsPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Account & date range states
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<AdAccountSummary[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>('all');
-  const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    end: new Date().toISOString().split('T')[0]
-  });
+  const [dateRange, setDateRange] = useState<DateRange>(() => createLastDaysDateRange(30));
 
   // Campaigns list data
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -179,12 +183,8 @@ export default function CampaignsPage() {
     setIsRefreshing(false);
   };
 
-  const handleDateChange = (value: string) => {
-    const [date, type] = value.split('_');
-    setDateRange(prev => ({
-      ...prev,
-      [type]: date
-    }));
+  const handleDateChange = (range: DateRange) => {
+    setDateRange(range);
     setRefreshKey(prev => prev + 1);
   };
 
@@ -368,10 +368,14 @@ export default function CampaignsPage() {
 
   return (
     <MainLayout
-      title="Quản Lý Chiến Dịch"
+      title="Quản lý chiến dịch"
       onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
-      onDateChange={handleDateChange}
+      dateRange={dateRange}
+      onDateRangeChange={handleDateChange}
+      showDateRange
+      showAccountSelect
+      dataStatus="live"
       accounts={accounts}
       selectedAccountId={selectedAccountId}
       onAccountChange={(id) => {

@@ -14,8 +14,8 @@ export function CreativeLibrary({ items, onCopy, onRemove }: CreativeLibraryProp
   return (
     <section className={styles.libraryPanel}>
       <div className={styles.libraryHeader}>
-        <h3 className={styles.sectionTitle}>Thu vien da luu</h3>
-        <span>{items.length} mau</span>
+        <h3 className={styles.sectionTitle}>Thư viện đã lưu</h3>
+        <span>{items.length} mẫu</span>
       </div>
       <div className={styles.libraryGrid}>
         {items.map((item) => (
@@ -25,8 +25,8 @@ export function CreativeLibrary({ items, onCopy, onRemove }: CreativeLibraryProp
             <p>{item.body}</p>
             <div className={styles.aiActions}>
               <button className="btn" onClick={() => onCopy(combineCreativeText(item))}>Copy</button>
-              <button className="btn" onClick={() => onCopy(item.imagePrompt || '')} disabled={!item.imagePrompt}>Copy anh</button>
-              <button className="btn" onClick={() => onRemove(item.id)}>Xoa</button>
+              <button className="btn" onClick={() => onCopy(item.imagePrompt || '')} disabled={!item.imagePrompt}>Copy ảnh</button>
+              <button className="btn" onClick={() => onRemove(item.id)}>Xóa</button>
             </div>
           </article>
         ))}

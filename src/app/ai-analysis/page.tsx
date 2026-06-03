@@ -20,7 +20,7 @@ export default function AiAnalysisPage() {
     {
       role: 'ai',
       content:
-        'Toi la AI Insights assistant. Bam Quet toan bo tai khoan de lay campaign data, sau do hoi toi campaign nao nen scale hoac can tat.',
+        'Tôi là AI Insights assistant. Bấm Quét toàn bộ tài khoản để lấy campaign data, sau đó hỏi tôi campaign nào nên scale hoặc cần tắt.',
     },
   ]);
 
@@ -35,11 +35,11 @@ export default function AiAnalysisPage() {
         ...prev,
         {
           role: 'ai',
-          content: `Da tao ${data.recommendations.length} insight tu nguon du lieu ${data.summary.source}. ROAS hien tai: ${data.summary.roas}x.`,
+          content: `Đã tạo ${data.recommendations.length} insight từ nguồn dữ liệu ${data.summary.source}. ROAS hiện tại: ${data.summary.roas}x.`,
         },
       ]);
     } else {
-      setError(result.error || 'Khong the tao AI insights');
+      setError(result.error || 'Không thể tạo AI insights');
     }
     setIsLoading(false);
   }, [selectedAccountId]);
@@ -67,11 +67,15 @@ export default function AiAnalysisPage() {
   return (
     <MainLayout
       title="AI Insights"
+      contentMode="fullHeight"
       showRightSidebar={false}
       onRefresh={loadInsights}
       isRefreshing={isLoading}
       accounts={payload?.accounts || []}
       selectedAccountId={selectedAccountId}
+      showDateRange={false}
+      showAccountSelect
+      dataStatus={payload ? payload.summary.source === 'mock' ? 'demo' : 'synced' : 'idle'}
       onAccountChange={(accountId) => {
         setSelectedAccountId(accountId);
         setPayload(null);
@@ -81,11 +85,11 @@ export default function AiAnalysisPage() {
         <main className={styles.feed}>
           <div className={styles.toolbar}>
             <div>
-              <h2>Tro ly Phan Tich AI</h2>
-              <p>Doc du lieu campaign, phat hien rui ro va co hoi hanh dong nhanh.</p>
+              <h2>Trợ lý phân tích AI</h2>
+              <p>Đọc dữ liệu campaign, phát hiện rủi ro và cơ hội hành động nhanh.</p>
             </div>
             <button className="btn btn-primary" onClick={loadInsights} disabled={isLoading}>
-              {isLoading ? 'Dang quet...' : 'Quet toan bo tai khoan'}
+              {isLoading ? 'Đang quét...' : 'Quét toàn bộ tài khoản'}
             </button>
           </div>
 
@@ -101,7 +105,7 @@ export default function AiAnalysisPage() {
           )}
 
           {isLoading && !payload ? (
-            <div className={styles.loadingState}>Dang phan tich du lieu...</div>
+            <div className={styles.loadingState}>Đang phân tích dữ liệu...</div>
           ) : (
             <section className={styles.recommendationList}>
               {(payload?.recommendations || []).map((item) => (
@@ -114,7 +118,7 @@ export default function AiAnalysisPage() {
         <aside className={styles.chatPanel}>
           <div className={styles.chatHeader}>
             <div className={styles.chatTitle}>AI Campaign Assistant</div>
-            <span>{payload ? payload.summary.source : 'waiting'}</span>
+            <span>{payload ? payload.summary.source : 'đang chờ'}</span>
           </div>
           <div className={styles.messageList}>
             {messages.map((message, index) => (
@@ -127,13 +131,13 @@ export default function AiAnalysisPage() {
             <input
               className={styles.chatInput}
               value={chatInput}
-              placeholder="Hoi AI ve scale, CPA, ROAS..."
+              placeholder="Hỏi AI về scale, CPA, ROAS..."
               onChange={(event) => setChatInput(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') handleSendMessage();
               }}
             />
-            <button className={styles.sendButton} onClick={handleSendMessage}>Send</button>
+            <button className={styles.sendButton} onClick={handleSendMessage}>Gửi</button>
           </div>
         </aside>
       </div>
@@ -176,26 +180,26 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
 }
 
 function buildChatReply(question: string, payload: AiInsightsPayload | null, scaleCandidate?: InsightRecommendation) {
-  if (!payload) return 'Chua co du lieu. Hay bam Quet toan bo tai khoan truoc.';
+  if (!payload) return 'Chưa có dữ liệu. Hãy bấm Quét toàn bộ tài khoản trước.';
 
   const lower = question.toLowerCase();
   const risk = payload.recommendations.find((item) => item.severity === 'danger');
 
   if (lower.includes('scale') || lower.includes('vit') || lower.includes('tang')) {
     return scaleCandidate
-      ? `${scaleCandidate.title}. De xuat: ${scaleCandidate.actionHint}`
-      : 'Chua thay campaign du dieu kien scale ro rang. Nen uu tien on dinh CPA/ROAS truoc.';
+      ? `${scaleCandidate.title}. Đề xuất: ${scaleCandidate.actionHint}`
+      : 'Chưa thấy campaign đủ điều kiện scale rõ ràng. Nên ưu tiên ổn định CPA/ROAS trước.';
   }
 
   if (lower.includes('tat') || lower.includes('kill') || lower.includes('rui ro') || lower.includes('cpa')) {
-    return risk ? `${risk.title}. Ly do: ${risk.description}` : 'Chua co canh bao CPA nghiem trong trong tap du lieu hien tai.';
+    return risk ? `${risk.title}. Lý do: ${risk.description}` : 'Chưa có cảnh báo CPA nghiêm trọng trong tập dữ liệu hiện tại.';
   }
 
   if (lower.includes('roas') || lower.includes('loi') || lower.includes('lai')) {
-    return `ROAS hien tai la ${payload.summary.roas}x, spend ${formatMoney(payload.summary.spend)}, revenue uoc tinh ${formatMoney(payload.summary.revenue)}.`;
+    return `ROAS hiện tại là ${payload.summary.roas}x, spend ${formatMoney(payload.summary.spend)}, revenue ước tính ${formatMoney(payload.summary.revenue)}.`;
   }
 
-  return `Toi dang thay ${payload.recommendations.length} insight. Uu tien hien tai: ${payload.recommendations[0]?.title || 'sync them du lieu campaign'}.`;
+  return `Tôi đang thấy ${payload.recommendations.length} insight. Ưu tiên hiện tại: ${payload.recommendations[0]?.title || 'sync thêm dữ liệu campaign'}.`;
 }
 
 function formatMoney(value: number) {

@@ -33,22 +33,22 @@ export function CopywritingForm({
   return (
     <div className={styles.formStack}>
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>San pham / Dich vu</label>
+        <label className={styles.formLabel}>Sản phẩm / Dịch vụ</label>
         <input className={styles.formControl} value={product} onChange={(event) => onProductChange(event.target.value)} />
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Diem noi bat (USPs)</label>
+        <label className={styles.formLabel}>Điểm nổi bật (USPs)</label>
         <textarea className={styles.formControl} value={usps} onChange={(event) => onUspsChange(event.target.value)} />
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Khach hang muc tieu</label>
+        <label className={styles.formLabel}>Khách hàng mục tiêu</label>
         <input className={styles.formControl} value={audience} onChange={(event) => onAudienceChange(event.target.value)} />
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Giong dieu</label>
+        <label className={styles.formLabel}>Giọng điệu</label>
         <select className={styles.formControl} value={tone} onChange={(event) => onToneChange(event.target.value)}>
           {TONE_OPTIONS.map((item) => (
             <option key={item}>{item}</option>
@@ -57,7 +57,7 @@ export function CopywritingForm({
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Framework cau truc bai viet</label>
+        <label className={styles.formLabel}>Framework cấu trúc bài viết</label>
         <div className={styles.frameworkGrid}>
           {FRAMEWORK_OPTIONS.map((item) => (
             <button
@@ -74,7 +74,7 @@ export function CopywritingForm({
       </div>
 
       <button className="btn btn-primary w-full" onClick={onGenerate} disabled={isGenerating}>
-        {isGenerating ? 'Dang tao noi dung...' : 'Tao noi dung ngay'}
+        {isGenerating ? 'Đang tạo nội dung...' : 'Tạo nội dung ngay'}
       </button>
     </div>
   );

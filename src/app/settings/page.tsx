@@ -1,82 +1,88 @@
 'use client';
 
-import React, { useState } from 'react';
-import MainLayout from '@/components/Layout/MainLayout';
+import { useState } from 'react';
 import { syncAllAccounts } from '@/app/actions/facebook';
+import MainLayout from '@/components/Layout/MainLayout';
+import { FeedbackState } from '@/components/ui/FeedbackState';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import styles from './settings.module.css';
+
+interface SyncResult {
+  success: boolean;
+  count?: number;
+  synced?: number;
+  error?: string;
+}
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<SyncResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleTestConnection = async () => {
     setLoading(true);
     setError(null);
     const res = await syncAllAccounts();
-    
+
     if (res.success) {
       setResult(res);
     } else {
+      setResult(null);
       setError(res.error || 'Lỗi kết nối');
     }
     setLoading(false);
   };
 
   return (
-    <MainLayout title="Cấu Hình Hệ Thống">
-      <div style={{ maxWidth: '800px' }}>
-        <section style={{ 
-          background: 'var(--bg-panel)', 
-          padding: '32px', 
-          borderRadius: '16px', 
-          border: '1px solid var(--border)' 
-        }}>
-          <h2 style={{ marginBottom: '16px', fontSize: '18px' }}>Trạng Thái Kết Nối Đa Tài Khoản</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px' }}>
-            Hệ thống sẽ quét và đồng bộ dữ liệu từ tất cả Ad Accounts của anh.
-          </p>
-          
-          <button 
-            onClick={handleTestConnection}
-            disabled={loading}
-            style={{
-              background: 'var(--accent)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
-          >
-            {loading ? 'Đang đồng bộ...' : 'Kích Hoạt Đồng Bộ Toàn Bộ'}
+    <MainLayout title="Cấu hình hệ thống" showRightSidebar={false} showAccountSelect={false} showDateRange={false} dataStatus="idle" dataStatusLabel="Cấu hình">
+      <div className={styles.container}>
+        <section className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <h2>Trạng thái kết nối Meta</h2>
+              <p>Kiểm tra token ads công ty, token Ad Library và đồng bộ dữ liệu từ các Ad Accounts.</p>
+            </div>
+            <StatusBadge tone={error ? 'danger' : result ? 'success' : 'neutral'}>
+              {error ? 'Có lỗi' : result ? 'Đã đồng bộ' : 'Chưa kiểm tra'}
+            </StatusBadge>
+          </div>
+
+          <div className={styles.statusGrid}>
+            <div className={styles.statusItem}>
+              <span>Token ads công ty</span>
+              <strong>FB_ACCESS_TOKEN</strong>
+            </div>
+            <div className={styles.statusItem}>
+              <span>Token phân tích đối thủ</span>
+              <strong>FB_AD_LIBRARY_ACCESS_TOKEN</strong>
+            </div>
+          </div>
+
+          <button type="button" className={styles.primaryButton} onClick={handleTestConnection} disabled={loading}>
+            {loading ? 'Đang đồng bộ...' : 'Đồng bộ tất cả tài khoản'}
           </button>
 
           {error && (
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '16px', 
-              background: 'var(--danger-bg)', 
-              color: 'var(--danger)', 
-              borderRadius: '8px',
-              fontSize: '14px'
-            }}>
-              {error}
-            </div>
+            <FeedbackState
+              tone="danger"
+              title="Không thể đồng bộ"
+              description={error}
+            />
           )}
 
-          {result && result.success && (
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '16px', 
-              background: 'var(--success-bg)', 
-              color: 'var(--success)', 
-              borderRadius: '8px',
-              fontSize: '14px'
-            }}>
-              ✅ Thành công! Đã tìm thấy {result.count} tài khoản và đồng bộ {result.synced} tài khoản đang hoạt động.
-            </div>
+          {result?.success && (
+            <FeedbackState
+              tone="success"
+              title="Đồng bộ thành công"
+              description={`Đã tìm thấy ${result.count || 0} tài khoản và đồng bộ ${result.synced || 0} dòng dữ liệu đang hoạt động.`}
+            />
           )}
+
+          <FeedbackState
+            tone="info"
+            title="Lưu ý về Meta Ad Library"
+            description="Nếu API trả lỗi quyền code 10/subcode 2332002, token có thể hợp lệ nhưng ứng dụng Meta chưa được cấp quyền gọi /ads_archive."
+          />
         </section>
       </div>
     </MainLayout>

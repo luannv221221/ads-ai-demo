@@ -1,95 +1,95 @@
-# UI/UX Improvement Implementation Plan
+# Kế Hoạch Triển Khai Cải Thiện UI/UX
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Dành cho agent triển khai:** BẮT BUỘC dùng sub-skill `superpowers:subagent-driven-development` khuyến nghị, hoặc `superpowers:executing-plans` để thực hiện kế hoạch theo từng task. Các bước dùng checkbox (`- [ ]`) để theo dõi tiến độ.
 
-**Goal:** Improve the Ads Manager app UI/UX from a mixed prototype into a consistent, operational SaaS interface for dashboard review, campaign control, creative generation, and AI insights.
+**Mục tiêu:** Nâng cấp UI/UX của Ads Manager từ trạng thái prototype chưa đồng nhất thành một ứng dụng SaaS vận hành quảng cáo rõ ràng, dễ thao tác và đáng tin cậy cho Dashboard, Campaigns, Creative và AI Insights.
 
-**Architecture:** First stabilize the shared UI foundation: copy, design tokens, layout, navigation, header, feedback states, and responsive behavior. Then polish each product workflow page using shared primitives so pages do not fight the shell layout or duplicate visual patterns.
+**Kiến trúc:** Làm chắc phần nền trước: ngôn ngữ hiển thị, design token, layout shell, Sidebar, Header, feedback state và responsive. Sau đó polish từng workflow chính bằng các UI primitive dùng chung để các màn không tự xử lý layout và style theo nhiều kiểu khác nhau.
 
-**Tech Stack:** Next.js 16 App Router, React 19, TypeScript, CSS Modules, Prisma/Supabase where existing data persistence is already used, Meta Marketing API server actions.
-
----
-
-## Scope
-
-This plan covers UI/UX, frontend structure, and user-facing state clarity. It does not solve Meta Ads Library permission approval, token issuance, or business verification. Those API permission issues remain outside this UI/UX cleanup unless the UI must explain the error.
-
-## Current Findings
-
-- Text is inconsistent across the app: English, Vietnamese with accents, Vietnamese without accents, and previous mojibake strings appear in different screens.
-- `src/app/globals.css` defines core colors but several modules use missing tokens such as `--purple`, `--pink`, `--transition`, `--border-light`, and `--shadow`.
-- `MainLayout` uses fixed viewport behavior, while Creative and AI Analysis use their own full-height layouts and negative margins.
-- Header controls are global but not page-aware. Creative and AI pages inherit dashboard-style controls even when date filters are not useful.
-- Sidebar has fixed desktop width and no mobile collapsed state.
-- Campaigns and Dashboard are closer to operational tools, while Creative and AI Analysis are split-pane workflows. The layout system should support both patterns explicitly.
-- Settings uses inline styles and should be converted to CSS module styling.
-- Error, empty, loading, sync, and data-source states are inconsistent.
-
-## File Structure Map
-
-Shared foundation:
-
-- Modify `src/app/globals.css`: design tokens, focus styles, global button utilities if kept.
-- Modify `src/components/Layout/MainLayout.tsx`: support layout modes and page-aware header controls.
-- Modify `src/components/Layout/MainLayout.module.css`: standard, full-height, and split-pane content modes.
-- Modify `src/components/Header/Header.tsx`: typed date range, optional controls, data freshness state.
-- Modify `src/components/Header/Header.module.css`: light/dark consistency, responsive wrap.
-- Modify `src/components/Sidebar/Sidebar.tsx`: clean labels, nav grouping, Settings link.
-- Modify `src/components/Sidebar/Sidebar.module.css`: responsive collapse and active state.
-- Create `src/lib/dateRange.ts`: deterministic date range helpers.
-- Create `src/lib/navigation.ts`: single source for nav labels/routes/icons.
-- Create `src/components/ui/StatusBadge.tsx`: shared status/tone badge.
-- Create `src/components/ui/FeedbackState.tsx`: shared loading, empty, error, and data-source states.
-- Create `src/components/ui/ui.module.css`: styles for shared UI primitives.
-
-Page-specific polish:
-
-- Modify `src/app/page.tsx`: dashboard shell props, date range type, cleaner refresh states.
-- Modify `src/components/Dashboard/Dashboard.tsx`: source clarity, metric hierarchy, remove prototype text.
-- Modify `src/components/Dashboard/Dashboard.module.css`: scan-friendly KPI/table styling.
-- Modify `src/app/campaigns/page.tsx`: table workflow, filters, bulk toolbar, modal clarity, typed date range.
-- Modify `src/app/campaigns/campaigns.module.css`: responsive table and action states.
-- Modify `src/app/creative/page.tsx`: remove automatic competitor scan on tab change, clarify data source and saved library.
-- Modify `src/app/creative/creative.module.css`: use shared layout and tokens.
-- Modify `src/app/ai-analysis/page.tsx`: recommendation reasoning, confidence, linked actions.
-- Modify `src/app/ai-analysis/page.module.css`: remove negative margin and use shell mode.
-- Modify `src/app/settings/page.tsx`: remove inline styles.
-- Create `src/app/settings/settings.module.css`: Settings page styles.
-
-Verification:
-
-- Use `npm.cmd run build` after each phase.
-- Use `npm.cmd run lint` after each phase; if it fails on pre-existing unrelated files, record the exact failing files and keep the phase changes lint-clean.
-- Manual browser QA at `http://localhost:3000/`, `/campaigns`, `/creative`, `/ai-analysis`, and `/settings`.
+**Tech stack:** Next.js 16 App Router, React 19, TypeScript, CSS Modules, Prisma/Supabase theo phần persistence hiện có, Meta Marketing API qua server actions.
 
 ---
 
-## Phase 0: Baseline And Rules
+## Phạm Vi
 
-### Task 0.1: Read Next.js Local Docs
+Kế hoạch này tập trung vào UI/UX, cấu trúc frontend và độ rõ ràng của trạng thái hiển thị cho người dùng. Kế hoạch không xử lý việc Meta phê duyệt quyền Ads Library API, cấp token hay business verification. Các lỗi quyền API chỉ được xử lý ở mức UI: hiển thị thông báo rõ nguyên nhân và hướng xử lý.
 
-**Files:**
+## Hiện Trạng Chính
 
-- Read: `AGENTS.md`
-- Read: `node_modules/next/dist/docs/01-app/01-getting-started/03-layouts-and-pages.md`
-- Read: `node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md`
-- Read: `node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md`
-- Read: `node_modules/next/dist/docs/01-app/01-getting-started/10-error-handling.md`
-- Read: `node_modules/next/dist/docs/01-app/01-getting-started/11-css.md`
+- Text trong app chưa thống nhất: có tiếng Anh, tiếng Việt có dấu, tiếng Việt không dấu và một số chuỗi từng bị lỗi encoding.
+- `src/app/globals.css` có token cơ bản nhưng nhiều CSS module đang dùng biến chưa được khai báo rõ như `--purple`, `--pink`, `--transition`, `--border-light`, `--shadow`.
+- `MainLayout` đang cố định viewport, trong khi Creative và AI Analysis lại tự dùng layout full-height và margin âm.
+- Header đang là global header nhưng chưa page-aware. Creative và AI Analysis vẫn bị ảnh hưởng bởi kiểu filter của Dashboard dù không phải lúc nào cũng cần date range.
+- Sidebar có chiều rộng desktop cố định, chưa có trạng thái collapse/mobile rõ ràng.
+- Dashboard và Campaigns là màn vận hành cần dense/scannable UI. Creative và AI Analysis là split-pane workflow. Layout system nên hỗ trợ rõ cả hai kiểu.
+- Settings đang dùng nhiều inline style, cần chuyển sang CSS Module.
+- Loading, empty, error, sync và data-source state chưa thống nhất.
 
-- [ ] **Step 1: Confirm the repo instruction**
+## Bản Đồ File
 
-Run:
+Nền tảng dùng chung:
+
+- Sửa `src/app/globals.css`: design token, focus style, token màu/trạng thái.
+- Sửa `src/components/Layout/MainLayout.tsx`: hỗ trợ layout mode và Header theo từng page.
+- Sửa `src/components/Layout/MainLayout.module.css`: mode standard, full-height và split-pane.
+- Sửa `src/components/Header/Header.tsx`: date range typed, optional controls, trạng thái dữ liệu.
+- Sửa `src/components/Header/Header.module.css`: đồng nhất light/dark, responsive wrap.
+- Sửa `src/components/Sidebar/Sidebar.tsx`: label sạch, group navigation, thêm Settings.
+- Sửa `src/components/Sidebar/Sidebar.module.css`: responsive collapse và active state.
+- Tạo `src/lib/dateRange.ts`: helper date range ổn định.
+- Tạo `src/lib/navigation.ts`: nguồn duy nhất cho route/label/menu.
+- Tạo `src/components/ui/StatusBadge.tsx`: badge trạng thái dùng chung.
+- Tạo `src/components/ui/FeedbackState.tsx`: loading, empty, error và data-source state dùng chung.
+- Tạo `src/components/ui/ui.module.css`: style cho UI primitive dùng chung.
+
+Polish theo từng màn:
+
+- Sửa `src/app/page.tsx`: props cho dashboard shell, date range typed, refresh state rõ hơn.
+- Sửa `src/components/Dashboard/Dashboard.tsx`: rõ nguồn dữ liệu, hierarchy metric, bỏ text prototype.
+- Sửa `src/components/Dashboard/Dashboard.module.css`: KPI/table dễ scan hơn.
+- Sửa `src/app/campaigns/page.tsx`: workflow bảng, filter, bulk toolbar, modal, date range typed.
+- Sửa `src/app/campaigns/campaigns.module.css`: responsive table và action state.
+- Sửa `src/app/creative/page.tsx`: không tự scan đối thủ khi đổi tab, rõ data source và thư viện đã lưu.
+- Sửa `src/app/creative/creative.module.css`: dùng layout/token chung.
+- Sửa `src/app/ai-analysis/page.tsx`: thêm lý do khuyến nghị, confidence, action liên quan.
+- Sửa `src/app/ai-analysis/page.module.css`: bỏ margin âm, dùng shell mode.
+- Sửa `src/app/settings/page.tsx`: bỏ inline style.
+- Tạo `src/app/settings/settings.module.css`: style cho Settings.
+
+Kiểm thử:
+
+- Chạy `npm.cmd run build` sau mỗi phase.
+- Chạy `npm.cmd run lint` sau mỗi phase. Nếu lint fail vì lỗi cũ không liên quan, ghi lại file/lỗi cụ thể.
+- QA thủ công các route: `/`, `/campaigns`, `/creative`, `/ai-analysis`, `/settings`.
+
+---
+
+## Phase 0: Baseline Và Quy Tắc
+
+### Task 0.1: Đọc Tài Liệu Next.js Cục Bộ
+
+**File:**
+
+- Đọc: `AGENTS.md`
+- Đọc: `node_modules/next/dist/docs/01-app/01-getting-started/03-layouts-and-pages.md`
+- Đọc: `node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md`
+- Đọc: `node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md`
+- Đọc: `node_modules/next/dist/docs/01-app/01-getting-started/10-error-handling.md`
+- Đọc: `node_modules/next/dist/docs/01-app/01-getting-started/11-css.md`
+
+- [ ] **Bước 1: Xác nhận instruction của repo**
+
+Chạy:
 
 ```powershell
 Get-Content -Path AGENTS.md
 ```
 
-Expected: the output says to read local Next.js docs before writing code.
+Kỳ vọng: output nhắc phải đọc tài liệu Next.js trong `node_modules/next/dist/docs/` trước khi viết code.
 
-- [ ] **Step 2: Read the App Router and CSS docs**
+- [ ] **Bước 2: Đọc tài liệu App Router và CSS**
 
-Run:
+Chạy:
 
 ```powershell
 Get-Content -Path node_modules\next\dist\docs\01-app\01-getting-started\03-layouts-and-pages.md -TotalCount 220
@@ -99,41 +99,41 @@ Get-Content -Path node_modules\next\dist\docs\01-app\01-getting-started\10-error
 Get-Content -Path node_modules\next\dist\docs\01-app\01-getting-started\11-css.md -TotalCount 220
 ```
 
-Expected: enough local context is available for client/server boundaries, layouts, actions, errors, and CSS modules.
+Kỳ vọng: đủ context về App Router, client/server component, server action, error handling và CSS Module.
 
-### Task 0.2: Capture Current UI Baseline
+### Task 0.2: Ghi Nhận Baseline UI Hiện Tại
 
-**Files:**
+**File:**
 
-- Read: `src/app/page.tsx`
-- Read: `src/app/campaigns/page.tsx`
-- Read: `src/app/creative/page.tsx`
-- Read: `src/app/ai-analysis/page.tsx`
-- Read: `src/app/settings/page.tsx`
+- Đọc: `src/app/page.tsx`
+- Đọc: `src/app/campaigns/page.tsx`
+- Đọc: `src/app/creative/page.tsx`
+- Đọc: `src/app/ai-analysis/page.tsx`
+- Đọc: `src/app/settings/page.tsx`
 
-- [ ] **Step 1: Build before changes**
+- [ ] **Bước 1: Build trước khi sửa**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds. If it fails before UI work starts, stop and fix only the blocking build issue.
+Kỳ vọng: build pass. Nếu fail trước khi bắt đầu sửa UI, chỉ xử lý lỗi build blocker trước.
 
-- [ ] **Step 2: Record lint baseline**
+- [ ] **Bước 2: Ghi lại baseline lint**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run lint
 ```
 
-Expected: lint may fail because the repo already has existing issues. Save the failing file list in the implementation notes before changing UI files.
+Kỳ vọng: lint có thể fail vì repo đã có lỗi cũ. Ghi lại danh sách file fail trước khi sửa UI.
 
-- [ ] **Step 3: Inspect routes manually**
+- [ ] **Bước 3: Kiểm tra thủ công các route**
 
-Open these URLs:
+Mở:
 
 ```text
 http://localhost:3000/
@@ -143,42 +143,42 @@ http://localhost:3000/ai-analysis
 http://localhost:3000/settings
 ```
 
-Expected: note layout breaks, text issues, overflow, and missing states for desktop width, tablet width, and mobile width.
+Kỳ vọng: ghi lại lỗi layout, text, overflow, loading/empty/error state còn thiếu ở desktop, tablet và mobile.
 
 ---
 
-## Phase 1: UI Foundation
+## Phase 1: Nền Tảng UI Dùng Chung
 
-### Task 1.1: Normalize User-Facing Copy
+### Task 1.1: Chuẩn Hóa Text Hiển Thị
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Sidebar/Sidebar.tsx`
-- Modify: `src/components/Header/Header.tsx`
-- Modify: `src/components/Layout/MainLayout.tsx`
-- Modify: `src/app/settings/page.tsx`
-- Modify: `src/components/Dashboard/Dashboard.tsx`
-- Modify: `src/app/campaigns/page.tsx`
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/ai-analysis/page.tsx`
+- Sửa: `src/components/Sidebar/Sidebar.tsx`
+- Sửa: `src/components/Header/Header.tsx`
+- Sửa: `src/components/Layout/MainLayout.tsx`
+- Sửa: `src/app/settings/page.tsx`
+- Sửa: `src/components/Dashboard/Dashboard.tsx`
+- Sửa: `src/app/campaigns/page.tsx`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
 
-- [ ] **Step 1: Find broken or mixed copy**
+- [ ] **Bước 1: Tìm text lỗi hoặc chưa thống nhất**
 
-Run:
+Chạy:
 
 ```powershell
 rg -n "Ã|Ä|á»|áº|â|Dang|Phan|Tao|Khong|Dong bo|Chua" src
 ```
 
-Expected: all lines that need copy review are visible.
+Kỳ vọng: thấy toàn bộ dòng cần review copy.
 
-- [ ] **Step 2: Choose the app language convention**
+- [ ] **Bước 2: Chọn quy ước ngôn ngữ**
 
-Use Vietnamese with accents for product UI strings. Keep technical product names in English when they are standard terms: `Dashboard`, `Creative`, `AI Insights`, `ROAS`, `CPA`, `CTR`, `Meta`.
+Dùng tiếng Việt có dấu cho UI. Giữ lại các thuật ngữ sản phẩm/kỹ thuật phổ biến bằng tiếng Anh khi cần: `Dashboard`, `Creative`, `AI Insights`, `ROAS`, `CPA`, `CTR`, `Meta`.
 
-- [ ] **Step 3: Replace navigation labels**
+- [ ] **Bước 3: Thay nhãn navigation**
 
-Use this target nav copy:
+Copy mục tiêu:
 
 ```ts
 [
@@ -190,11 +190,11 @@ Use this target nav copy:
 ]
 ```
 
-Expected: Sidebar labels are readable and consistent.
+Kỳ vọng: Sidebar dễ đọc, thống nhất, không còn lỗi encoding.
 
-- [ ] **Step 4: Replace global fallback messages**
+- [ ] **Bước 4: Thay message dùng chung**
 
-Use these exact user-facing messages where they match the existing behavior:
+Dùng các message sau ở nơi phù hợp:
 
 ```ts
 const messages = {
@@ -207,27 +207,27 @@ const messages = {
 };
 ```
 
-Expected: no mojibake remains in shared layout, header, sidebar, and settings.
+Kỳ vọng: layout, header, sidebar và settings không còn text mojibake.
 
-- [ ] **Step 5: Verify copy scan**
+- [ ] **Bước 5: Kiểm tra lại lỗi encoding**
 
-Run:
+Chạy:
 
 ```powershell
 rg -n "Ã|Ä|á»|áº|â" src
 ```
 
-Expected: no mojibake matches in user-facing UI files.
+Kỳ vọng: không còn match trong các file UI người dùng nhìn thấy.
 
-### Task 1.2: Define Design Tokens
+### Task 1.2: Định Nghĩa Design Token
 
-**Files:**
+**File:**
 
-- Modify: `src/app/globals.css`
+- Sửa: `src/app/globals.css`
 
-- [ ] **Step 1: Add missing semantic tokens**
+- [ ] **Bước 1: Thêm token semantic còn thiếu**
 
-Add or merge these variables into `:root`:
+Thêm hoặc merge vào `:root`:
 
 ```css
 :root {
@@ -243,9 +243,9 @@ Add or merge these variables into `:root`:
 }
 ```
 
-- [ ] **Step 2: Add dark-mode equivalents**
+- [ ] **Bước 2: Thêm token cho dark mode**
 
-Add or merge these variables into `[data-theme="dark"]`:
+Thêm hoặc merge vào `[data-theme="dark"]`:
 
 ```css
 [data-theme="dark"] {
@@ -259,9 +259,9 @@ Add or merge these variables into `[data-theme="dark"]`:
 }
 ```
 
-- [ ] **Step 3: Add focus styles**
+- [ ] **Bước 3: Thêm focus style**
 
-Add:
+Thêm:
 
 ```css
 button:focus-visible,
@@ -274,29 +274,29 @@ textarea:focus-visible {
 }
 ```
 
-Expected: keyboard focus is visible across the app.
+Kỳ vọng: người dùng điều hướng bằng bàn phím luôn thấy focus rõ.
 
-- [ ] **Step 4: Verify token usage**
+- [ ] **Bước 4: Kiểm tra token**
 
-Run:
+Chạy:
 
 ```powershell
 rg -n "var\(--(purple|pink|transition|border-light|shadow|focus-ring)" src
 ```
 
-Expected: these tokens are now defined in `src/app/globals.css`.
+Kỳ vọng: các token được dùng đều đã có trong `src/app/globals.css`.
 
-### Task 1.3: Create Shared Feedback Primitives
+### Task 1.3: Tạo UI Primitive Cho Trạng Thái
 
-**Files:**
+**File:**
 
-- Create: `src/components/ui/FeedbackState.tsx`
-- Create: `src/components/ui/StatusBadge.tsx`
-- Create: `src/components/ui/ui.module.css`
+- Tạo: `src/components/ui/FeedbackState.tsx`
+- Tạo: `src/components/ui/StatusBadge.tsx`
+- Tạo: `src/components/ui/ui.module.css`
 
-- [ ] **Step 1: Create shared types and components**
+- [ ] **Bước 1: Tạo component dùng chung**
 
-Create `src/components/ui/FeedbackState.tsx` with this public API:
+Tạo `src/components/ui/FeedbackState.tsx`:
 
 ```tsx
 import styles from './ui.module.css';
@@ -323,7 +323,7 @@ export function FeedbackState({ tone = 'neutral', title, description, action }: 
 }
 ```
 
-Create `src/components/ui/StatusBadge.tsx` with this public API:
+Tạo `src/components/ui/StatusBadge.tsx`:
 
 ```tsx
 import styles from './ui.module.css';
@@ -340,9 +340,9 @@ export function StatusBadge({ tone = 'neutral', children }: StatusBadgeProps) {
 }
 ```
 
-- [ ] **Step 2: Create shared CSS**
+- [ ] **Bước 2: Tạo CSS dùng chung**
 
-Create `src/components/ui/ui.module.css` with:
+Tạo `src/components/ui/ui.module.css`:
 
 ```css
 .feedbackState {
@@ -415,32 +415,32 @@ Create `src/components/ui/ui.module.css` with:
 }
 ```
 
-- [ ] **Step 3: Build**
+- [ ] **Bước 3: Build**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds.
+Kỳ vọng: build pass.
 
 ---
 
 ## Phase 2: Layout, Sidebar, Header
 
-### Task 2.1: Add Explicit Layout Modes
+### Task 2.1: Thêm Layout Mode Rõ Ràng
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Layout/MainLayout.tsx`
-- Modify: `src/components/Layout/MainLayout.module.css`
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/ai-analysis/page.tsx`
+- Sửa: `src/components/Layout/MainLayout.tsx`
+- Sửa: `src/components/Layout/MainLayout.module.css`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
 
-- [ ] **Step 1: Add layout mode prop**
+- [ ] **Bước 1: Thêm prop layout mode**
 
-Update `MainLayoutProps` with:
+Cập nhật `MainLayoutProps`:
 
 ```ts
 type MainLayoutMode = 'standard' | 'fullHeight';
@@ -460,11 +460,11 @@ interface MainLayoutProps {
 }
 ```
 
-Use `contentMode = 'standard'` as the default.
+Mặc định dùng `contentMode = 'standard'`.
 
-- [ ] **Step 2: Apply content mode class**
+- [ ] **Bước 2: Gắn class theo content mode**
 
-In `MainLayout.tsx`, set:
+Trong `MainLayout.tsx`:
 
 ```tsx
 <main className={`${styles.content} ${contentMode === 'fullHeight' ? styles.contentFullHeight : ''}`}>
@@ -472,9 +472,9 @@ In `MainLayout.tsx`, set:
 </main>
 ```
 
-- [ ] **Step 3: Update layout CSS**
+- [ ] **Bước 3: Cập nhật CSS layout**
 
-Add:
+Thêm:
 
 ```css
 .contentFullHeight {
@@ -483,11 +483,11 @@ Add:
 }
 ```
 
-Expected: Creative and AI Analysis can use `contentMode="fullHeight"` and remove negative margins.
+Kỳ vọng: Creative và AI Analysis dùng `contentMode="fullHeight"` thay vì tự margin âm.
 
-- [ ] **Step 4: Update Creative and AI Analysis shell usage**
+- [ ] **Bước 4: Cập nhật Creative và AI Analysis**
 
-Set:
+Đặt:
 
 ```tsx
 <MainLayout
@@ -497,23 +497,23 @@ Set:
 >
 ```
 
-Remove page-level negative margins and hard-coded compensation for layout padding.
+Xóa margin âm và các đoạn tự bù layout padding.
 
-### Task 2.2: Make Header Page-Aware
+### Task 2.2: Làm Header Theo Từng Page
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Header/Header.tsx`
-- Modify: `src/components/Header/Header.module.css`
-- Modify: `src/components/Layout/MainLayout.tsx`
-- Modify: `src/app/page.tsx`
-- Modify: `src/app/campaigns/page.tsx`
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/ai-analysis/page.tsx`
+- Sửa: `src/components/Header/Header.tsx`
+- Sửa: `src/components/Header/Header.module.css`
+- Sửa: `src/components/Layout/MainLayout.tsx`
+- Sửa: `src/app/page.tsx`
+- Sửa: `src/app/campaigns/page.tsx`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
 
-- [ ] **Step 1: Replace string date callback with typed range**
+- [ ] **Bước 1: Thay callback date dạng string bằng typed range**
 
-Create this type in `src/components/Header/Header.tsx`:
+Tạo type trong `src/components/Header/Header.tsx`:
 
 ```ts
 export interface DateRange {
@@ -522,13 +522,13 @@ export interface DateRange {
 }
 ```
 
-Change header prop from:
+Đổi prop:
 
 ```ts
 onDateChange?: (range: string) => void;
 ```
 
-to:
+thành:
 
 ```ts
 dateRange?: DateRange;
@@ -539,13 +539,13 @@ dataStatus?: 'live' | 'synced' | 'demo' | 'error' | 'idle';
 dataStatusLabel?: string;
 ```
 
-- [ ] **Step 2: Remove `new Date()` from Header render**
+- [ ] **Bước 2: Bỏ `new Date()` trong render của Header**
 
-Header must use the passed `dateRange` only. If `dateRange` is missing, hide date fields.
+Header chỉ dùng `dateRange` được truyền vào. Nếu không có `dateRange`, ẩn date field.
 
-- [ ] **Step 3: Use page-specific controls**
+- [ ] **Bước 3: Cấu hình controls theo từng page**
 
-Use these defaults:
+Quy ước:
 
 ```ts
 const headerConfigByPage = {
@@ -557,9 +557,9 @@ const headerConfigByPage = {
 };
 ```
 
-- [ ] **Step 4: Fix Header visual consistency**
+- [ ] **Bước 4: Sửa visual của Header**
 
-Remove hard-coded dark backgrounds from inputs/selects. Use:
+Bỏ hard-coded dark background ở input/select. Dùng:
 
 ```css
 .dateInput,
@@ -570,29 +570,29 @@ Remove hard-coded dark backgrounds from inputs/selects. Use:
 }
 ```
 
-- [ ] **Step 5: Manual QA**
+- [ ] **Bước 5: QA thủ công**
 
-Check:
+Kiểm tra:
 
 ```text
-Dashboard: date range visible, account visible, refresh visible.
-Campaigns: date range visible, account visible, refresh visible.
-Creative: account visible if useful, date range hidden.
-AI Analysis: account visible, date range hidden.
-Settings: no date range, no account select.
+Dashboard: hiện date range, account, refresh.
+Campaigns: hiện date range, account, refresh.
+Creative: ẩn date range, account hiện nếu còn cần.
+AI Analysis: ẩn date range, account hiện.
+Settings: ẩn date range và account select.
 ```
 
-### Task 2.3: Responsive Sidebar
+### Task 2.3: Sidebar Responsive
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Sidebar/Sidebar.tsx`
-- Modify: `src/components/Sidebar/Sidebar.module.css`
-- Create: `src/lib/navigation.ts`
+- Sửa: `src/components/Sidebar/Sidebar.tsx`
+- Sửa: `src/components/Sidebar/Sidebar.module.css`
+- Tạo: `src/lib/navigation.ts`
 
-- [ ] **Step 1: Move nav config to `src/lib/navigation.ts`**
+- [ ] **Bước 1: Chuyển nav config sang `src/lib/navigation.ts`**
 
-Create:
+Tạo:
 
 ```ts
 export const NAV_ITEMS = [
@@ -604,13 +604,13 @@ export const NAV_ITEMS = [
 ] as const;
 ```
 
-- [ ] **Step 2: Render groups in Sidebar**
+- [ ] **Bước 2: Render group trong Sidebar**
 
-Sidebar should render group labels and nav items from `NAV_ITEMS`.
+Sidebar render group label và nav item từ `NAV_ITEMS`, không hard-code rời rạc trong component.
 
-- [ ] **Step 3: Add mobile behavior**
+- [ ] **Bước 3: Thêm hành vi mobile**
 
-Add CSS behavior:
+CSS gợi ý:
 
 ```css
 @media (max-width: 900px) {
@@ -628,27 +628,31 @@ Add CSS behavior:
 }
 ```
 
-If a mobile toggle is added in Header, make it a real `button` with `aria-label="Mở menu"`.
+Nếu thêm nút mở menu trong Header, dùng button thật:
 
-- [ ] **Step 4: Manual QA**
+```tsx
+<button type="button" aria-label="Mở menu">...</button>
+```
 
-At mobile width, verify the sidebar does not permanently consume horizontal space and can be opened/closed.
+- [ ] **Bước 4: QA thủ công**
+
+Ở mobile width, Sidebar không được chiếm ngang màn hình vĩnh viễn và phải mở/đóng được.
 
 ---
 
-## Phase 3: Workflow Page Polish
+## Phase 3: Polish Theo Từng Workflow
 
-### Task 3.1: Dashboard Operational Polish
+### Task 3.1: Polish Dashboard Theo Hướng Vận Hành
 
-**Files:**
+**File:**
 
-- Modify: `src/app/page.tsx`
-- Modify: `src/components/Dashboard/Dashboard.tsx`
-- Modify: `src/components/Dashboard/Dashboard.module.css`
+- Sửa: `src/app/page.tsx`
+- Sửa: `src/components/Dashboard/Dashboard.tsx`
+- Sửa: `src/components/Dashboard/Dashboard.module.css`
 
-- [ ] **Step 1: Make data source visible**
+- [ ] **Bước 1: Hiển thị nguồn dữ liệu**
 
-Show one badge near the dashboard title or KPI section:
+Gần title hoặc KPI section, hiển thị:
 
 ```tsx
 <StatusBadge tone={stats?.isMock ? 'warning' : 'success'}>
@@ -656,9 +660,9 @@ Show one badge near the dashboard title or KPI section:
 </StatusBadge>
 ```
 
-- [ ] **Step 2: Simplify KPI hierarchy**
+- [ ] **Bước 2: Đơn giản hóa KPI chính**
 
-Use four primary cards only:
+Chỉ giữ 4 card chính:
 
 ```text
 Spend
@@ -667,11 +671,11 @@ ROAS
 CPA / Result Cost
 ```
 
-Secondary metrics such as CTR, CPM, impressions, and results should move below the primary row.
+Metric phụ như CTR, CPM, impressions, results đưa xuống khu vực bên dưới.
 
-- [ ] **Step 3: Improve campaign tree scan**
+- [ ] **Bước 3: Làm campaign tree dễ scan**
 
-Campaign rows should use:
+Mỗi campaign row nên có:
 
 ```text
 Campaign name
@@ -682,30 +686,30 @@ ROAS/performance
 Action suggestion
 ```
 
-Expected: a media buyer can identify scale/watch/kill candidates without reading long card text.
+Kỳ vọng: media buyer nhìn nhanh là biết campaign nào nên scale, watch hoặc kill.
 
-- [ ] **Step 4: Verify**
+- [ ] **Bước 4: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds and Dashboard still loads with selected account and date range.
+Kỳ vọng: build pass, Dashboard vẫn load theo account và date range đã chọn.
 
 ### Task 3.2: Campaigns Table Workflow
 
-**Files:**
+**File:**
 
-- Modify: `src/app/campaigns/page.tsx`
-- Modify: `src/app/campaigns/campaigns.module.css`
-- Use: `src/components/ui/StatusBadge.tsx`
-- Use: `src/components/ui/FeedbackState.tsx`
+- Sửa: `src/app/campaigns/page.tsx`
+- Sửa: `src/app/campaigns/campaigns.module.css`
+- Dùng: `src/components/ui/StatusBadge.tsx`
+- Dùng: `src/components/ui/FeedbackState.tsx`
 
-- [ ] **Step 1: Make filters compact and persistent**
+- [ ] **Bước 1: Làm filter bar gọn và ổn định**
 
-Top control bar should contain:
+Top control bar gồm:
 
 ```text
 Search input
@@ -715,24 +719,24 @@ Create campaign button
 Rules button
 ```
 
-Each control should keep a stable width and not resize the table while typing.
+Mỗi control có width ổn định, không làm bảng giật layout khi nhập search.
 
-- [ ] **Step 2: Improve inline budget editing**
+- [ ] **Bước 2: Cải thiện inline budget editing**
 
-Budget edit state should show:
+Trạng thái edit budget cần có:
 
 ```text
 Input
 Save button
 Cancel button
 Saving state
-Error toast if update fails
-Rollback to previous budget if update fails
+Error toast nếu update fail
+Rollback về budget cũ nếu update fail
 ```
 
-- [ ] **Step 3: Improve bulk action toolbar**
+- [ ] **Bước 3: Cải thiện bulk action toolbar**
 
-When at least one row is selected, the toolbar should show:
+Khi chọn ít nhất một row, toolbar hiển thị:
 
 ```text
 {count} selected
@@ -742,42 +746,42 @@ Create rule
 Clear selection
 ```
 
-The toolbar must not cover table rows on mobile; on small screens it should dock to the bottom with full width.
+Toolbar không được che row trên mobile. Ở màn nhỏ, toolbar dock full-width ở bottom.
 
-- [ ] **Step 4: Add empty states**
+- [ ] **Bước 4: Thêm empty state**
 
-Use `FeedbackState` for:
+Dùng `FeedbackState` cho:
 
 ```text
-No campaigns match filters
-No campaigns returned by Meta
-Meta API error
+Không có campaign khớp bộ lọc
+Meta không trả về campaign
+Lỗi Meta API
 ```
 
-- [ ] **Step 5: Verify**
+- [ ] **Bước 5: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds. Manual QA verifies filter, select, inline budget, and bulk toolbar behavior.
+Kỳ vọng: build pass. QA thủ công filter, select, inline budget và bulk toolbar.
 
-### Task 3.3: Creative Workflow Clarity
+### Task 3.3: Làm Rõ Workflow Creative
 
-**Files:**
+**File:**
 
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/creative/creative.module.css`
-- Modify: `src/app/creative/components/CompetitorResults.tsx`
-- Modify: `src/app/creative/components/CreativeLibrary.tsx`
-- Use: `src/components/ui/StatusBadge.tsx`
-- Use: `src/components/ui/FeedbackState.tsx`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/creative/creative.module.css`
+- Sửa: `src/app/creative/components/CompetitorResults.tsx`
+- Sửa: `src/app/creative/components/CreativeLibrary.tsx`
+- Dùng: `src/components/ui/StatusBadge.tsx`
+- Dùng: `src/components/ui/FeedbackState.tsx`
 
-- [ ] **Step 1: Stop automatic competitor scan on tab click**
+- [ ] **Bước 1: Dừng tự scan đối thủ khi đổi tab**
 
-Remove the automatic call from tab switching:
+Bỏ call tự động trong tab switch:
 
 ```tsx
 onClick={() => {
@@ -785,11 +789,11 @@ onClick={() => {
 }}
 ```
 
-Expected: analysis only runs when the user clicks the scan/analyze button.
+Kỳ vọng: chỉ phân tích đối thủ khi user bấm nút scan/analyze.
 
-- [ ] **Step 2: Make data source explicit**
+- [ ] **Bước 2: Hiển thị rõ nguồn dữ liệu**
 
-Competitor results should show one of:
+Competitor results hiển thị một trong các trạng thái:
 
 ```text
 Dữ liệu Meta Ad Library
@@ -797,27 +801,27 @@ Lỗi quyền Meta Ad Library
 Chưa quét đối thủ
 ```
 
-- [ ] **Step 3: Improve saved library clarity**
+- [ ] **Bước 3: Làm rõ thư viện đã lưu**
 
-Saved creative cards should show:
+Card trong thư viện hiển thị:
 
 ```text
-Source: Copywriting / Counter-ad
-Created time
+Nguồn: Copywriting / Counter-ad
+Thời điểm tạo
 Copy button
 Edit button
 Delete button
 ```
 
-If the library still uses localStorage, show a small note:
+Nếu vẫn lưu bằng localStorage, hiển thị note nhỏ:
 
 ```text
 Lưu trên trình duyệt hiện tại
 ```
 
-- [ ] **Step 4: Improve competitor form**
+- [ ] **Bước 4: Cải thiện competitor form**
 
-The competitor form should include:
+Form phân tích đối thủ gồm:
 
 ```text
 Page URL input
@@ -827,31 +831,31 @@ Analyze button
 Permission error help text area
 ```
 
-Expected: the user understands that Meta permission errors are caused by API access, not by the UI.
+Kỳ vọng: user hiểu lỗi quyền Meta là vấn đề API/app permission, không phải UI không hoạt động.
 
-- [ ] **Step 5: Verify**
+- [ ] **Bước 5: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds. Manual QA verifies copy generation, save/delete library, competitor scan error, and no automatic scan on tab switch.
+Kỳ vọng: build pass. QA copy generation, lưu/xóa library, competitor scan error và không tự scan khi đổi tab.
 
-### Task 3.4: AI Analysis Recommendation UX
+### Task 3.4: UX Cho AI Analysis Recommendation
 
-**Files:**
+**File:**
 
-- Modify: `src/app/ai-analysis/page.tsx`
-- Modify: `src/app/ai-analysis/page.module.css`
-- Modify: `src/app/actions/aiInsights.ts`
-- Use: `src/components/ui/StatusBadge.tsx`
-- Use: `src/components/ui/FeedbackState.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
+- Sửa: `src/app/ai-analysis/page.module.css`
+- Sửa: `src/app/actions/aiInsights.ts`
+- Dùng: `src/components/ui/StatusBadge.tsx`
+- Dùng: `src/components/ui/FeedbackState.tsx`
 
-- [ ] **Step 1: Add recommendation explanation fields**
+- [ ] **Bước 1: Thêm field giải thích recommendation**
 
-Extend each recommendation payload with:
+Mở rộng payload:
 
 ```ts
 interface InsightRecommendation {
@@ -874,100 +878,100 @@ interface InsightRecommendation {
 }
 ```
 
-- [ ] **Step 2: Render why-this-matters details**
+- [ ] **Bước 2: Render phần vì sao AI khuyến nghị**
 
-Each card should show:
+Mỗi card hiển thị:
 
 ```text
-Recommendation title
+Tiêu đề khuyến nghị
 Impact
 Confidence
 Metrics
-Why AI recommends this
-Suggested next action
+Vì sao AI khuyến nghị
+Hành động tiếp theo
 ```
 
-- [ ] **Step 3: Make chat limitations clear**
+- [ ] **Bước 3: Làm rõ giới hạn chat**
 
-The chat panel should say when it is using local rule-based replies rather than a real LLM:
+Chat panel cần ghi rõ nếu đang trả lời bằng rule local thay vì LLM thật:
 
 ```text
 Trả lời dựa trên dữ liệu chiến dịch đã quét
 ```
 
-- [ ] **Step 4: Verify**
+- [ ] **Bước 4: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds. Manual QA verifies recommendations are understandable without reading source code.
+Kỳ vọng: build pass. QA xem recommendation có dễ hiểu mà không cần đọc code hay không.
 
-### Task 3.5: Settings Page Cleanup
+### Task 3.5: Dọn Settings Page
 
-**Files:**
+**File:**
 
-- Modify: `src/app/settings/page.tsx`
-- Create: `src/app/settings/settings.module.css`
-- Use: `src/components/ui/StatusBadge.tsx`
-- Use: `src/components/ui/FeedbackState.tsx`
+- Sửa: `src/app/settings/page.tsx`
+- Tạo: `src/app/settings/settings.module.css`
+- Dùng: `src/components/ui/StatusBadge.tsx`
+- Dùng: `src/components/ui/FeedbackState.tsx`
 
-- [ ] **Step 1: Remove inline styles**
+- [ ] **Bước 1: Bỏ inline style**
 
-Replace inline style objects with classes:
+Thay inline style object bằng CSS module:
 
 ```tsx
 import styles from './settings.module.css';
 ```
 
-- [ ] **Step 2: Add connection status sections**
+- [ ] **Bước 2: Thêm section trạng thái kết nối**
 
-Settings should show:
+Settings hiển thị:
 
 ```text
-Meta company ads token status
-Meta Ad Library token status
-Last sync result
-Sync all accounts action
+Trạng thái token ads công ty
+Trạng thái token Meta Ad Library
+Kết quả sync gần nhất
+Nút sync tất cả tài khoản
 ```
 
-- [ ] **Step 3: Add API permission guidance**
+- [ ] **Bước 3: Thêm hướng dẫn lỗi quyền API**
 
-When Ad Library returns code `10` and subcode `2332002`, show:
+Khi Ad Library trả code `10` và subcode `2332002`, hiển thị:
 
 ```text
 Ứng dụng Meta chưa được cấp quyền Ads Library API. Token hợp lệ nhưng app chưa có quyền gọi /ads_archive.
 ```
 
-- [ ] **Step 4: Verify**
+- [ ] **Bước 4: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds and Settings no longer contains large inline style blocks.
+Kỳ vọng: build pass, Settings không còn block inline style lớn.
 
 ---
 
-## Phase 4: Error, Loading, Empty, And Source States
+## Phase 4: Chuẩn Hóa Error, Loading, Empty Và Data Source
 
-### Task 4.1: Create API Error Mapping
+### Task 4.1: Tạo API Error Mapping
 
-**Files:**
+**File:**
 
-- Create: `src/lib/apiErrorMessages.ts`
-- Modify: `src/app/actions/creative.ts`
-- Modify: `src/app/actions/facebook.ts`
-- Modify: `src/app/actions/dashboard.ts`
-- Modify: `src/app/actions/campaigns.ts`
+- Tạo: `src/lib/apiErrorMessages.ts`
+- Sửa: `src/app/actions/creative.ts`
+- Sửa: `src/app/actions/facebook.ts`
+- Sửa: `src/app/actions/dashboard.ts`
+- Sửa: `src/app/actions/campaigns.ts`
 
-- [ ] **Step 1: Create error mapper**
+- [ ] **Bước 1: Tạo error mapper**
 
-Create:
+Tạo:
 
 ```ts
 export interface ApiErrorShape {
@@ -994,9 +998,9 @@ export function getFriendlyApiError(error: ApiErrorShape | string | unknown): st
 }
 ```
 
-- [ ] **Step 2: Use mapper in server actions**
+- [ ] **Bước 2: Dùng mapper trong server actions**
 
-When returning action errors, return:
+Khi return lỗi từ action:
 
 ```ts
 return {
@@ -1005,79 +1009,79 @@ return {
 };
 ```
 
-- [ ] **Step 3: Verify**
+- [ ] **Bước 3: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds and Meta permission errors become actionable UI messages.
+Kỳ vọng: build pass, lỗi quyền Meta hiển thị dễ hiểu và có hành động tiếp theo.
 
-### Task 4.2: Standardize Page States
+### Task 4.2: Chuẩn Hóa Page State
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Dashboard/Dashboard.tsx`
-- Modify: `src/app/campaigns/page.tsx`
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/ai-analysis/page.tsx`
-- Use: `src/components/ui/FeedbackState.tsx`
+- Sửa: `src/components/Dashboard/Dashboard.tsx`
+- Sửa: `src/app/campaigns/page.tsx`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
+- Dùng: `src/components/ui/FeedbackState.tsx`
 
-- [ ] **Step 1: Use one pattern for loading**
+- [ ] **Bước 1: Một pattern cho loading**
 
-Every page should use:
+Mọi page dùng:
 
 ```tsx
 <FeedbackState tone="info" title="Đang tải dữ liệu..." description="Hệ thống đang lấy dữ liệu mới nhất." />
 ```
 
-- [ ] **Step 2: Use one pattern for empty**
+- [ ] **Bước 2: Một pattern cho empty**
 
-Every empty list should use:
+Mọi empty list dùng:
 
 ```tsx
 <FeedbackState tone="neutral" title="Chưa có dữ liệu" description="Thay đổi bộ lọc hoặc đồng bộ lại tài khoản để tải dữ liệu." />
 ```
 
-- [ ] **Step 3: Use one pattern for error**
+- [ ] **Bước 3: Một pattern cho error**
 
-Every error view should use:
+Mọi error view dùng:
 
 ```tsx
 <FeedbackState tone="danger" title="Không thể tải dữ liệu" description={error} />
 ```
 
-- [ ] **Step 4: Verify**
+- [ ] **Bước 4: Verify**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: all major pages have consistent loading, empty, and error states.
+Kỳ vọng: các page chính có loading, empty và error state đồng nhất.
 
 ---
 
-## Phase 5: Accessibility, Responsive QA, And Final Verification
+## Phase 5: Accessibility, Responsive QA Và Final Verification
 
 ### Task 5.1: Accessibility Pass
 
-**Files:**
+**File:**
 
-- Modify: `src/components/Header/Header.tsx`
-- Modify: `src/components/Sidebar/Sidebar.tsx`
-- Modify: `src/app/campaigns/page.tsx`
-- Modify: `src/app/creative/page.tsx`
-- Modify: `src/app/ai-analysis/page.tsx`
+- Sửa: `src/components/Header/Header.tsx`
+- Sửa: `src/components/Sidebar/Sidebar.tsx`
+- Sửa: `src/app/campaigns/page.tsx`
+- Sửa: `src/app/creative/page.tsx`
+- Sửa: `src/app/ai-analysis/page.tsx`
 
-- [ ] **Step 1: Ensure icon-only buttons have labels**
+- [ ] **Bước 1: Icon-only button phải có label**
 
-Every icon-only button must include `aria-label`.
+Mọi icon-only button cần có `aria-label`.
 
-Example:
+Ví dụ:
 
 ```tsx
 <button type="button" aria-label="Làm mới dữ liệu" className={styles.iconButton}>
@@ -1085,37 +1089,37 @@ Example:
 </button>
 ```
 
-- [ ] **Step 2: Ensure interactive elements are real buttons or links**
+- [ ] **Bước 2: Interactive element phải là button hoặc link thật**
 
-Clickable controls that trigger actions should use:
+Control tạo action dùng:
 
 ```tsx
 <button type="button">...</button>
 ```
 
-Navigation should use:
+Navigation dùng:
 
 ```tsx
 <Link href="/campaigns">Chiến dịch</Link>
 ```
 
-- [ ] **Step 3: Verify keyboard navigation**
+- [ ] **Bước 3: QA keyboard navigation**
 
-Manual QA:
+QA thủ công:
 
 ```text
-Tab through Sidebar, Header controls, Campaign filters, Creative forms, AI chat.
-Enter and Space should activate buttons.
-Visible focus ring should appear on every focusable control.
+Tab qua Sidebar, Header controls, Campaign filters, Creative forms, AI chat.
+Enter và Space phải kích hoạt button.
+Focus ring phải hiển thị trên mọi control có thể focus.
 ```
 
 ### Task 5.2: Responsive QA
 
-**Files:**
+**File:**
 
-- Modify: CSS modules touched in earlier phases.
+- Sửa các CSS module đã chạm ở phase trước nếu cần.
 
-- [ ] **Step 1: Test desktop**
+- [ ] **Bước 1: Test desktop**
 
 Viewport:
 
@@ -1123,15 +1127,15 @@ Viewport:
 1440 x 900
 ```
 
-Expected:
+Kỳ vọng:
 
 ```text
-Dashboard and Campaigns scan well.
-Creative split pane is usable.
-AI Analysis feed and chat fit without overlap.
+Dashboard và Campaigns dễ scan.
+Creative split pane dùng tốt.
+AI Analysis feed và chat không overlap.
 ```
 
-- [ ] **Step 2: Test tablet**
+- [ ] **Bước 2: Test tablet**
 
 Viewport:
 
@@ -1139,15 +1143,15 @@ Viewport:
 1024 x 768
 ```
 
-Expected:
+Kỳ vọng:
 
 ```text
-Sidebar is still usable or collapsed.
-Header controls wrap without overlap.
-Campaigns table remains horizontally scrollable.
+Sidebar dùng được hoặc collapse hợp lý.
+Header controls wrap không overlap.
+Campaigns table scroll ngang được.
 ```
 
-- [ ] **Step 3: Test mobile**
+- [ ] **Bước 3: Test mobile**
 
 Viewport:
 
@@ -1155,60 +1159,60 @@ Viewport:
 390 x 844
 ```
 
-Expected:
+Kỳ vọng:
 
 ```text
-Sidebar does not force horizontal overflow.
-Header does not overlap content.
-Creative panes stack vertically.
-AI chat stacks below recommendations.
-Campaigns table or cards remain readable.
+Sidebar không ép horizontal overflow.
+Header không đè nội dung.
+Creative panes stack dọc.
+AI chat nằm dưới recommendations.
+Campaigns table hoặc card vẫn đọc được.
 ```
 
-### Task 5.3: Final Build And Lint
+### Task 5.3: Build Và Lint Cuối
 
-**Files:**
+**File:**
 
-- Verify all touched files.
+- Verify toàn bộ file đã sửa.
 
-- [ ] **Step 1: Build**
+- [ ] **Bước 1: Build**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run build
 ```
 
-Expected: build succeeds.
+Kỳ vọng: build pass.
 
-- [ ] **Step 2: Lint**
+- [ ] **Bước 2: Lint**
 
-Run:
+Chạy:
 
 ```powershell
 npm.cmd run lint
 ```
 
-Expected: lint succeeds. If unrelated pre-existing files still fail, list exact files and errors in the handoff.
+Kỳ vọng: lint pass. Nếu vẫn fail ở file cũ không liên quan, ghi lại file và lỗi cụ thể trong handoff.
 
-- [ ] **Step 3: Search for removed patterns**
+- [ ] **Bước 3: Scan pattern cần loại bỏ**
 
-Run:
+Chạy:
 
 ```powershell
 rg -n "Ã|Ä|á»|áº|â|margin: -24px|margin: -16px|new Date\\(" src
 ```
 
-Expected:
+Kỳ vọng:
 
 ```text
-No mojibake in UI files.
-No negative page margin hacks in Creative or AI Analysis.
-No new Date() inside Header render.
-Allowed date construction remains only in server actions or date helper utilities.
+Không còn mojibake trong UI file.
+Không còn negative margin hack ở Creative hoặc AI Analysis.
+Không còn new Date() trong render của Header.
+Date construction chỉ còn ở server action hoặc date helper.
 ```
 
-### Task 5.4: Suggested Commits
+### Task 5.4: Commit Gợi Ý
 
 - [ ] **Commit Phase 1**
 
@@ -1231,7 +1235,7 @@ git add src/app/page.tsx src/components/Dashboard src/app/campaigns src/app/crea
 git commit -m "feat: polish core ads workflows"
 ```
 
-- [ ] **Commit Phase 4 and 5**
+- [ ] **Commit Phase 4 Và 5**
 
 ```powershell
 git add src/lib/apiErrorMessages.ts src/app/actions src/components src/app
@@ -1242,12 +1246,12 @@ git commit -m "feat: standardize ui states and accessibility"
 
 ## Definition Of Done
 
-- App text is readable and consistent across Dashboard, Campaigns, Creative, AI Analysis, and Settings.
-- Shared tokens used by CSS modules are defined in `src/app/globals.css`.
-- Header controls are page-aware and do not show irrelevant filters.
-- Sidebar is usable on desktop and does not break mobile layout.
-- Creative and AI Analysis no longer use negative margin layout hacks.
-- Loading, empty, error, and data-source states use shared UI primitives.
-- Meta permission errors explain the app permission problem clearly.
-- `npm.cmd run build` passes.
-- `npm.cmd run lint` passes or only reports documented unrelated pre-existing errors.
+- Text toàn app đọc được, thống nhất trên Dashboard, Campaigns, Creative, AI Analysis và Settings.
+- Các token CSS được dùng bởi module đều có trong `src/app/globals.css`.
+- Header page-aware, không hiện filter không liên quan.
+- Sidebar dùng tốt trên desktop và không phá layout mobile.
+- Creative và AI Analysis không còn dùng negative margin layout hack.
+- Loading, empty, error và data-source state dùng primitive chung.
+- Lỗi quyền Meta được giải thích rõ: app/token thiếu quyền API nào, user cần xử lý ở đâu.
+- `npm.cmd run build` pass.
+- `npm.cmd run lint` pass hoặc chỉ còn lỗi cũ không liên quan đã được ghi rõ.

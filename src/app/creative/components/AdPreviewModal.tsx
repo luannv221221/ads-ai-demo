@@ -15,7 +15,7 @@ export function AdPreviewModal({ ad, competitorData, onClose, onCopy }: AdPrevie
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalCard} onClick={(event) => event.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <div className={styles.modalTitle}>Xem truoc Facebook Post - {ad.title}</div>
+          <div className={styles.modalTitle}>Xem trước Facebook Post - {ad.title}</div>
           <button className={styles.modalCloseBtn} onClick={onClose}>x</button>
         </div>
         <div className={styles.modalBody}>
@@ -23,40 +23,40 @@ export function AdPreviewModal({ ad, competitorData, onClose, onCopy }: AdPrevie
             <div className={styles.fbHeader}>
               <div className={styles.fbAvatar}>{competitorData?.overview.competitor.charAt(0) || 'C'}</div>
               <div className={styles.fbMeta}>
-                <div className={styles.fbPageName}>{competitorData?.overview.competitor || 'Doi thu'}</div>
-                <div className={styles.fbSubtext}>{ad.timeLabel} - Duoc tai tro</div>
+                <div className={styles.fbPageName}>{competitorData?.overview.competitor || 'Đối thủ'}</div>
+                <div className={styles.fbSubtext}>{ad.timeLabel} - Được tài trợ</div>
               </div>
             </div>
             <div className={styles.fbText}>{ad.text}</div>
             <div className={styles.fbMediaPlaceholder}>{ad.thumbnail}</div>
             <div className={styles.fbActionContainer}>
               <div className={styles.fbActionLeft}>
-                <div className={styles.fbActionHeadline}>Tim hieu them</div>
-                <div className={styles.fbActionDesc}>{competitorData?.overview.competitor || 'Doi thu'}</div>
+                <div className={styles.fbActionHeadline}>Tìm hiểu thêm</div>
+                <div className={styles.fbActionDesc}>{competitorData?.overview.competitor || 'Đối thủ'}</div>
               </div>
-              <button className={styles.fbActionButton}>Dang ky</button>
+              <button className={styles.fbActionButton}>Đăng ký</button>
             </div>
             <div className={styles.fbEngagementRow}>
               <span>{ad.engagement}</span>
-              <span>24 binh luan - 8 chia se</span>
+              <span>24 bình luận - 8 chia sẻ</span>
             </div>
           </div>
 
           <div className={styles.aiAnalysisPanel}>
             <section>
-              <div className={styles.aiSectionTitle}>Trang thai quang cao</div>
+              <div className={styles.aiSectionTitle}>Trạng thái quảng cáo</div>
               <span className={styles.psychologicalTriggerBadge}>{ad.statusLabel}</span>
             </section>
             <section>
-              <div className={styles.aiSectionTitle}>Phan tich tam ly quang cao</div>
+              <div className={styles.aiSectionTitle}>Phân tích tâm lý quảng cáo</div>
               <div className={styles.aiSectionContent}>
-                <p><strong>Trigger chinh:</strong> Tap trung vao uu dai, noi so bo lo va bang chung xa hoi.</p>
-                <p><strong>Mo hinh thuyet phuc:</strong> Ket hop PAS voi CTA truc tiep de day nguoi xem nhan tin nhanh.</p>
-                <p><strong>Diem yeu:</strong> Can kiem chung cam ket, chat luong giao vien va tinh ca nhan hoa.</p>
+                <p><strong>Trigger chính:</strong> Tập trung vào ưu đãi, nỗi sợ bỏ lỡ và bằng chứng xã hội.</p>
+                <p><strong>Mô hình thuyết phục:</strong> Kết hợp PAS với CTA trực tiếp để đẩy người xem nhắn tin nhanh.</p>
+                <p><strong>Điểm yếu:</strong> Cần kiểm chứng cam kết, chất lượng giáo viên và tính cá nhân hóa.</p>
               </div>
             </section>
             <section>
-              <div className={styles.aiSectionTitle}>De xuat phan don</div>
+              <div className={styles.aiSectionTitle}>Đề xuất phản đòn</div>
               <div className={styles.aiSectionContent}>
                 {competitorData?.overview.angles.slice(0, 2).map((angle) => (
                   <p key={angle.title}><strong>{angle.title}:</strong> {angle.hook.slice(0, 90)}...</p>
@@ -64,8 +64,8 @@ export function AdPreviewModal({ ad, competitorData, onClose, onCopy }: AdPrevie
               </div>
             </section>
             <div className={styles.aiActions}>
-              <button className="btn btn-primary" onClick={() => onCopy(ad.text)}>Sao chep noi dung QC</button>
-              <button className="btn" onClick={onClose}>Dong</button>
+              <button className="btn btn-primary" onClick={() => onCopy(ad.text)}>Sao chép nội dung QC</button>
+              <button className="btn" onClick={onClose}>Đóng</button>
             </div>
           </div>
         </div>

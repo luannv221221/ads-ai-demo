@@ -1,0 +1,68 @@
+.feedbackState {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  padding: 16px;
+}
+
+.feedbackState h3 {
+  margin: 0 0 4px;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.feedbackState p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.feedbackAction {
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.neutral {
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+}
+
+.info {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.success {
+  color: var(--success);
+  background: var(--success-bg);
+  border-color: rgba(16, 185, 129, 0.22);
+}
+
+.warning {
+  color: var(--warning);
+  background: var(--warning-bg);
+  border-color: rgba(245, 158, 11, 0.22);
+}
+
+.danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: rgba(239, 68, 68, 0.22);
+}

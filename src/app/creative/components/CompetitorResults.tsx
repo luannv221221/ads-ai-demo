@@ -30,7 +30,7 @@ export function CompetitorResults({
     return (
       <div className={styles.loadingState}>
         <div className={styles.spinner} />
-        <span>AI dang phan tich quang cao doi thu...</span>
+        <span>AI đang phân tích quảng cáo đối thủ...</span>
       </div>
     );
   }
@@ -42,8 +42,8 @@ export function CompetitorResults({
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <div className={styles.emptyTitle}>Quet thu vien quang cao</div>
-        <div className={styles.emptyText}>Nhap Fanpage doi thu de lay hook, ke ho va angle phan cong.</div>
+        <div className={styles.emptyTitle}>Quét thư viện quảng cáo</div>
+        <div className={styles.emptyText}>Nhập Fanpage đối thủ để lấy hook, kẽ hở và angle phản công.</div>
       </div>
     );
   }
@@ -51,14 +51,14 @@ export function CompetitorResults({
   return (
     <div className={styles.outputStack}>
       <div className={styles.resultHeader}>
-        <h3 className={styles.sectionTitle}>Du lieu quet tu Facebook Ad Library</h3>
+        <h3 className={styles.sectionTitle}>Dữ liệu quét từ Facebook Ad Library</h3>
         <span>{data.sourceLabel}</span>
       </div>
 
       <div className={styles.metricGrid}>
-        <Metric value={String(data.overview.activeAds)} label="Quang cao dang chay" />
-        <Metric value={`${data.overview.imagePct}%`} label="Ty le hinh anh" />
-        <Metric value={data.overview.platforms} label="Nen tang chinh" />
+        <Metric value={String(data.overview.activeAds)} label="Quảng cáo đang chạy" />
+        <Metric value={`${data.overview.imagePct}%`} label="Tỷ lệ hình ảnh" />
+        <Metric value={data.overview.platforms} label="Nền tảng chính" />
       </div>
 
       <section>
@@ -82,46 +82,46 @@ export function CompetitorResults({
 
       <article className={styles.aiCard}>
         <div className={styles.aiCardHeader}>
-          <div className={`${styles.aiBadge} ${styles.warningBadge}`}>Phan tich AI: {data.overview.competitor}</div>
+          <div className={`${styles.aiBadge} ${styles.warningBadge}`}>Phân tích AI: {data.overview.competitor}</div>
         </div>
-        <TextList title="Hook trong tam" items={data.overview.hooks} />
-        <TextList title="Ke ho co the khai thac" items={data.overview.loopholes} />
+        <TextList title="Hook trọng tâm" items={data.overview.hooks} />
+        <TextList title="Kẽ hở có thể khai thác" items={data.overview.loopholes} />
       </article>
 
-      <h3 className={styles.sectionTitle}>Goi y 3 goc tiep can moi</h3>
+      <h3 className={styles.sectionTitle}>Gợi ý 3 góc tiếp cận mới</h3>
       {data.overview.angles.map((angle, index) => (
         <article key={angle.title} className={styles.aiCard}>
           <div className={styles.aiCardHeader}>
             <div className={`${styles.aiBadge} ${styles.successBadge}`}>{angle.title}</div>
           </div>
-          <div className={styles.fieldCaption}>Hook goi y toi uu CTR</div>
+          <div className={styles.fieldCaption}>Hook gợi ý tối ưu CTR</div>
           <div className={`${styles.copyContent} ${styles.strongText}`}>{angle.hook}</div>
           <div className={styles.aiActions}>
-            <button className="btn btn-primary" onClick={() => onWriteFromHook(angle.hook)}>Viet bai tu hook nay</button>
+            <button className="btn btn-primary" onClick={() => onWriteFromHook(angle.hook)}>Viết bài từ hook này</button>
             <button className="btn" onClick={() => onGenerateCounterAd(index)} disabled={isGeneratingCounterAd && activeCounterAngleIdx === index}>
-              {isGeneratingCounterAd && activeCounterAngleIdx === index ? 'Dang tao phan don...' : 'Tao bai phan don'}
+              {isGeneratingCounterAd && activeCounterAngleIdx === index ? 'Đang tạo phản đòn...' : 'Tạo bài phản đòn'}
             </button>
           </div>
 
           {counterAd && activeCounterAngleIdx === index && (
             <div className={styles.comparisonGrid}>
               <div className={styles.aiCard}>
-                <div className={styles.comparisonHeader}>Quang cao doi thu</div>
-                <div className={styles.copyContent}>{data.adList[0]?.text || 'Khong co du lieu'}</div>
-                <div className={styles.strategyBlock}><strong>Ke ho:</strong> {counterAd.targetLoophole}</div>
+                <div className={styles.comparisonHeader}>Quảng cáo đối thủ</div>
+                <div className={styles.copyContent}>{data.adList[0]?.text || 'Không có dữ liệu'}</div>
+                <div className={styles.strategyBlock}><strong>Kẽ hở:</strong> {counterAd.targetLoophole}</div>
               </div>
               <div className={styles.aiCard}>
-                <div className={styles.comparisonHeader}>Bai phan don cua ban</div>
+                <div className={styles.comparisonHeader}>Bài phản đòn của bạn</div>
                 <div className={styles.counterAdBadge}>{counterAd.badge}</div>
                 <div className={styles.copyContent}>{counterAd.hook}</div>
                 <div className={styles.copyContent}>{counterAd.body}</div>
                 <div className={styles.copyContent}>{counterAd.cta}</div>
-                <div className={styles.strategyBlock}><strong>Chien thuat:</strong> {counterAd.strategyDescription}</div>
+                <div className={styles.strategyBlock}><strong>Chiến thuật:</strong> {counterAd.strategyDescription}</div>
                 <div className={styles.aiActions}>
                   <button className="btn btn-primary" onClick={() => onCopy(`${counterAd.hook}\n\n${counterAd.body}\n\n${counterAd.cta}`)}>
-                    Sao chep
+                    Sao chép
                   </button>
-                  <button className="btn" onClick={() => onSaveCounterAd(counterAd)}>Luu vao thu vien</button>
+                  <button className="btn" onClick={() => onSaveCounterAd(counterAd)}>Lưu vào thư viện</button>
                 </div>
               </div>
             </div>

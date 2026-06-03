@@ -1,0 +1,96 @@
+.container {
+  width: 100%;
+  max-width: 920px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.panelHeader h2 {
+  margin: 0 0 8px;
+  color: var(--text-main);
+  font-size: 20px;
+}
+
+.panelHeader p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.statusItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  padding: 14px;
+}
+
+.statusItem span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.statusItem strong {
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.primaryButton {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 12px 18px;
+  transition: var(--transition);
+}
+
+.primaryButton:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 720px) {
+  .panel {
+    padding: 20px;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+  }
+
+  .statusGrid {
+    grid-template-columns: 1fr;
+  }
+}

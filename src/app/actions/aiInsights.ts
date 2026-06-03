@@ -84,7 +84,7 @@ export async function getAiInsightsAction(adAccountId: string = 'all'): Promise<
       },
     };
   } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Khong the tao AI insights.' };
+    return { success: false, error: error instanceof Error ? error.message : 'Không thể tạo AI insights.' };
   }
 }
 
@@ -105,54 +105,54 @@ function buildRecommendations(campaigns: CampaignLike[], stats: Record<string, u
   if (riskCandidate) {
     recommendations.push({
       id: 'risk-cpa',
-      category: 'Cost alert',
+      category: 'Cảnh báo chi phí',
       severity: 'danger',
-      title: `CPA risk in ${riskCandidate.name}`,
-      description: `Campaign nay dang co CPA ${formatMoney(riskCandidate.cpa)} voi spend ${formatMoney(riskCandidate.spend)}. Can kiem tra ad set va creative dang dot ngan sach truoc khi tiep tuc scale.`,
-      impact: 'Reduce wasted spend',
+      title: `Rủi ro CPA ở ${riskCandidate.name}`,
+      description: `Campaign này đang có CPA ${formatMoney(riskCandidate.cpa)} với spend ${formatMoney(riskCandidate.spend)}. Cần kiểm tra ad set và creative đang đốt ngân sách trước khi tiếp tục scale.`,
+      impact: 'Giảm lãng phí ngân sách',
       metrics: [
         { label: 'Spend', value: formatMoney(riskCandidate.spend) },
         { label: 'CPA', value: formatMoney(riskCandidate.cpa), tone: 'danger' },
-        { label: 'Performance', value: riskCandidate.performance || 'No ROAS' },
+        { label: 'Performance', value: riskCandidate.performance || 'Chưa có ROAS' },
       ],
       actionLabel: 'Review campaign',
-      actionHint: 'Mo Campaign Management va kiem tra ad set co CPA cao nhat.',
+      actionHint: 'Mở Campaign Management và kiểm tra ad set có CPA cao nhất.',
     });
   }
 
   if (scaleCandidate) {
     recommendations.push({
       id: 'scale-candidate',
-      category: 'Scale opportunity',
+      category: 'Cơ hội scale',
       severity: 'success',
-      title: `Scale candidate: ${scaleCandidate.name}`,
-      description: `Campaign nay dang co performance ${scaleCandidate.performance || 'tot'} va trang thai ${scaleCandidate.statusLabel || 'active'}. Nen tang ngan sach tung buoc 20-30% de tranh lam reset learning qua manh.`,
-      impact: 'High scale potential',
+      title: `Ứng viên scale: ${scaleCandidate.name}`,
+      description: `Campaign này đang có performance ${scaleCandidate.performance || 'tốt'} và trạng thái ${scaleCandidate.statusLabel || 'active'}. Nên tăng ngân sách từng bước 20-30% để tránh reset learning quá mạnh.`,
+      impact: 'Tiềm năng scale cao',
       metrics: [
         { label: 'Current budget', value: formatMoney((scaleCandidate.budget || 0) / 100) },
         { label: 'ROAS', value: scaleCandidate.performance || 'N/A', tone: 'success' },
         { label: 'Spend', value: formatMoney(scaleCandidate.spend) },
       ],
       actionLabel: 'Scale budget',
-      actionHint: 'Tang ngan sach 20-30% va theo doi CPA trong 24h.',
+      actionHint: 'Tăng ngân sách 20-30% và theo dõi CPA trong 24h.',
     });
   }
 
   if (heavySpend) {
     recommendations.push({
       id: 'budget-focus',
-      category: 'Budget focus',
+      category: 'Trọng tâm ngân sách',
       severity: 'warning',
-      title: `Largest spend: ${heavySpend.name}`,
-      description: `Campaign nay chiem spend lon nhat trong tap du lieu hien tai. Neu performance khong vuot muc trung binh, can uu tien toi uu truoc cac campaign nho hon.`,
-      impact: 'Budget control',
+      title: `Spend lớn nhất: ${heavySpend.name}`,
+      description: `Campaign này chiếm spend lớn nhất trong tập dữ liệu hiện tại. Nếu performance không vượt mức trung bình, cần ưu tiên tối ưu trước các campaign nhỏ hơn.`,
+      impact: 'Kiểm soát ngân sách',
       metrics: [
         { label: 'Spend', value: formatMoney(heavySpend.spend), tone: 'warning' },
         { label: 'Impressions', value: formatNumber(heavySpend.impressions || 0) },
         { label: 'Conversions', value: formatNumber(heavySpend.conversions || 0) },
       ],
-      actionLabel: 'Inspect spend',
-      actionHint: 'Kiem tra ad set/ads co spend cao nhung conversion thap.',
+      actionLabel: 'Kiểm tra spend',
+      actionHint: 'Kiểm tra ad set/ads có spend cao nhưng conversion thấp.',
     });
   }
 
@@ -167,18 +167,18 @@ function buildFallbackRecommendations(stats: Record<string, unknown> | null): In
   return [
     {
       id: 'fallback-overview',
-      category: 'Account health',
+      category: 'Sức khỏe tài khoản',
       severity: Number(roas) >= 2 ? 'success' : 'warning',
-      title: Number(roas) >= 2 ? 'Account is above baseline ROAS' : 'Account needs campaign-level data',
-      description: 'AI da doc dashboard stats, nhung campaign detail chua du de xep hang tung campaign. Hay sync lai ad accounts neu can phan tich sau hon.',
-      impact: 'Needs more data',
+      title: Number(roas) >= 2 ? 'Tài khoản đang vượt baseline ROAS' : 'Tài khoản cần dữ liệu cấp campaign',
+      description: 'AI đã đọc dashboard stats, nhưng campaign detail chưa đủ để xếp hạng từng campaign. Hãy sync lại ad accounts nếu cần phân tích sâu hơn.',
+      impact: 'Cần thêm dữ liệu',
       metrics: [
         { label: 'Spend today', value: formatMoney(spend) },
         { label: 'ROAS', value: `${roas}x` },
         { label: 'CTR', value: `${ctr}%` },
       ],
-      actionLabel: 'Sync data',
-      actionHint: 'Dong bo lai tai khoan quang cao de co campaign/adset detail.',
+      actionLabel: 'Sync dữ liệu',
+      actionHint: 'Đồng bộ lại tài khoản quảng cáo để có campaign/adset detail.',
     },
   ];
 }

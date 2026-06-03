@@ -1,19 +1,35 @@
 'use client';
 
 import React from 'react';
+import type { DateRange } from '@/lib/dateRange';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
+import { FeedbackState } from '../ui/FeedbackState';
 import styles from './MainLayout.module.css';
+
+type MainLayoutMode = 'standard' | 'fullHeight';
+
+interface LayoutAccount {
+  id: string;
+  name?: string;
+  account_id?: string;
+}
 
 interface MainLayoutProps {
   children: React.ReactNode;
   title?: string;
+  contentMode?: MainLayoutMode;
   showRightSidebar?: boolean;
   rightSidebarContent?: React.ReactNode;
   onRefresh?: () => void;
   isRefreshing?: boolean;
-  onDateChange?: (range: string) => void;
-  accounts?: any[];
+  dateRange?: DateRange;
+  onDateRangeChange?: (range: DateRange) => void;
+  showDateRange?: boolean;
+  showAccountSelect?: boolean;
+  dataStatus?: 'live' | 'synced' | 'demo' | 'error' | 'idle';
+  dataStatusLabel?: string;
+  accounts?: LayoutAccount[];
   selectedAccountId?: string;
   onAccountChange?: (accountId: string) => void;
 }
@@ -21,11 +37,17 @@ interface MainLayoutProps {
 export default function MainLayout({ 
   children, 
   title = 'Dashboard', 
+  contentMode = 'standard',
   showRightSidebar = true,
   rightSidebarContent,
   onRefresh,
   isRefreshing,
-  onDateChange,
+  dateRange,
+  onDateRangeChange,
+  showDateRange,
+  showAccountSelect,
+  dataStatus,
+  dataStatusLabel,
   accounts = [],
   selectedAccountId = 'all',
   onAccountChange
@@ -39,12 +61,17 @@ export default function MainLayout({
           title={title} 
           onRefresh={onRefresh} 
           isRefreshing={isRefreshing} 
-          onDateChange={onDateChange}
+          dateRange={dateRange}
+          onDateRangeChange={onDateRangeChange}
+          showDateRange={showDateRange}
+          showAccountSelect={showAccountSelect}
+          dataStatus={dataStatus}
+          dataStatusLabel={dataStatusLabel}
           accounts={accounts}
           selectedAccountId={selectedAccountId}
           onAccountChange={onAccountChange}
         />
-        <main className={styles.content}>
+        <main className={`${styles.content} ${contentMode === 'fullHeight' ? styles.contentFullHeight : ''}`}>
           {children}
         </main>
       </div>
@@ -52,9 +79,7 @@ export default function MainLayout({
       {showRightSidebar && (
         <aside className={styles.rightSidebar}>
           {rightSidebarContent || (
-            <div style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', marginTop: '40px' }}>
-              Chưa có thông báo mới
-            </div>
+            <FeedbackState tone="neutral" title="Chưa có thông báo mới" description="Các cảnh báo AI sẽ xuất hiện tại đây khi có dữ liệu mới." />
           )}
         </aside>
       )}

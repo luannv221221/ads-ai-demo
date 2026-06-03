@@ -52,6 +52,31 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+.live {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.synced {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.demo,
+.idle {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
 .pulse {
   width: 8px;
   height: 8px;
@@ -60,9 +85,31 @@
   animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.synced .pulse {
+  background: var(--success);
+}
+
+.demo .pulse,
+.idle .pulse {
+  background: var(--warning);
+}
+
+.error .pulse {
+  background: var(--danger);
+}
+
+.spinningIcon {
+  animation: spin 1s linear infinite;
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
   50% { opacity: .7; transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .actions {
@@ -127,21 +174,21 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #18181b; /* Màu Zinc 900 rất đậm */
+  background: var(--bg-panel);
   padding: 8px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  transition: var(--transition);
 }
 
 .inputWrapper:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: #27272a;
+  border-color: var(--border-light);
+  background: var(--bg-hover);
 }
 
 .inputLabel {
   font-size: 10px;
-  color: #a1a1aa;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
@@ -150,7 +197,7 @@
 .dateInput {
   background: transparent;
   border: none;
-  color: #ffffff !important; /* Ép màu trắng */
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 600;
   outline: none;
@@ -160,7 +207,6 @@
 }
 
 .dateInput::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Chuyển icon lịch sang màu trắng */
   opacity: 0.8;
   cursor: pointer;
 }
@@ -169,22 +215,22 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #18181b;
+  background: var(--bg-panel);
   padding: 8px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  transition: var(--transition);
 }
 
 .selectWrapper:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: #27272a;
+  border-color: var(--border-light);
+  background: var(--bg-hover);
 }
 
 .accountSelect {
   background: transparent;
   border: none;
-  color: #ffffff !important;
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 600;
   outline: none;
@@ -193,8 +239,52 @@
   width: 180px;
   appearance: none;
   padding-right: 20px;
-  background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2371717a" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
   background-repeat: no-repeat;
   background-position: right center;
 }
 
+@media (max-width: 1100px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .titleArea {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .datePickerGroup {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inputWrapper,
+  .selectWrapper {
+    width: 100%;
+  }
+
+  .dateInput,
+  .accountSelect {
+    width: 100%;
+  }
+
+  .divider {
+    display: none;
+  }
+}

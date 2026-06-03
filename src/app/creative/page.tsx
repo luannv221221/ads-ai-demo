@@ -86,13 +86,13 @@ export default function CreativePage() {
       const result = await syncAllAccounts();
       if (result.success) {
         setRefreshKey((prev) => prev + 1);
-        showToast('Dong bo tai khoan quang cao thanh cong');
+        showToast('Đồng bộ tài khoản quảng cáo thành công');
       } else {
-        showToast(`Dong bo that bai: ${result.error}`, 'error');
+        showToast(`Đồng bộ thất bại: ${result.error}`, 'error');
       }
     } catch (error) {
       console.error(error);
-      showToast('Co loi khi dong bo tai khoan', 'error');
+      showToast('Có lỗi khi đồng bộ tài khoản', 'error');
     } finally {
       setIsRefreshing(false);
     }
@@ -100,12 +100,12 @@ export default function CreativePage() {
 
   const handleCopyToClipboard = async (text: string) => {
     if (!text.trim()) {
-      showToast('Khong co noi dung de sao chep', 'error');
+      showToast('Không có nội dung để sao chép', 'error');
       return;
     }
 
     await navigator.clipboard.writeText(text);
-    showToast('Da sao chep noi dung vao Clipboard');
+    showToast('Đã sao chép nội dung vào Clipboard');
   };
 
   const enrichCopies = useCallback(
@@ -124,13 +124,13 @@ export default function CreativePage() {
       const res = await generateCopywritingAction({ product, usps, audience, tone, framework });
       if (res.success && res.data) {
         setGeneratedCopies(enrichCopies(res.data));
-        showToast('Da tao thanh cong cac mau quang cao');
+        showToast('Đã tạo thành công các mẫu quảng cáo');
       } else {
-        showToast(res.error || 'Tao bai viet that bai', 'error');
+        showToast(res.error || 'Tạo bài viết thất bại', 'error');
       }
     } catch (error) {
       console.error(error);
-      showToast('Co loi he thong xay ra', 'error');
+      showToast('Có lỗi hệ thống xảy ra', 'error');
     } finally {
       setIsGenerating(false);
     }
@@ -147,13 +147,13 @@ export default function CreativePage() {
       });
       if (res.success && res.data) {
         setCompetitorData(res.data);
-        showToast('Phan tich doi thu hoan tat');
+        showToast('Phân tích đối thủ hoàn tất');
       } else {
-        showToast(res.error || 'Phan tich doi thu that bai', 'error');
+        showToast(res.error || 'Phân tích đối thủ thất bại', 'error');
       }
     } catch (error) {
       console.error(error);
-      showToast('Co loi khi quet du lieu', 'error');
+      showToast('Có lỗi khi quét dữ liệu', 'error');
     } finally {
       setIsAnalyzing(false);
     }
@@ -181,29 +181,29 @@ export default function CreativePage() {
       });
       if (res.success && res.data) {
         setCounterAdData(res.data);
-        showToast('Da tao bai phan don');
+        showToast('Đã tạo bài phản đòn');
       } else {
-        showToast(res.error || 'Tao bai phan don that bai', 'error');
+        showToast(res.error || 'Tạo bài phản đòn thất bại', 'error');
       }
     } catch (error) {
       console.error(error);
-      showToast('Co loi khi tao bai phan don', 'error');
+      showToast('Có lỗi khi tạo bài phản đòn', 'error');
     } finally {
       setIsGeneratingCounterAd(false);
     }
   };
 
   const handleWriteFromHook = (hookText: string) => {
-    setUsps((prev) => `Khai thac hook: "${hookText}"\n\n${prev}`);
+    setUsps((prev) => `Khai thác hook: "${hookText}"\n\n${prev}`);
     setActiveTab('copywriting');
-    showToast('Da chuyen hook sang tab tao noi dung', 'info');
+    showToast('Đã chuyển hook sang tab tạo nội dung', 'info');
   };
 
   const handleSaveCreative = (copy: GeneratedCopy, source: SavedCreative['source'] = 'copywriting') => {
     const fallbackImagePrompt = createImagePrompt(copy, product, audience);
     const nextItems = [createSavedCreative(copy, source, fallbackImagePrompt), ...savedCreatives].slice(0, 24);
     persistSavedCreatives(nextItems);
-    showToast('Da luu vao thu vien');
+    showToast('Đã lưu vào thư viện');
   };
 
   const handleSaveCounterAd = (counterAd: CounterAd) => {
@@ -221,12 +221,17 @@ export default function CreativePage() {
 
   return (
     <MainLayout
-      title="Tro Ly Creative AI"
+      title="Trợ lý Creative AI"
+      contentMode="fullHeight"
       onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
       accounts={accounts}
       selectedAccountId={selectedAccountId}
       onAccountChange={setSelectedAccountId}
+      showDateRange={false}
+      showAccountSelect
+      dataStatus="idle"
+      dataStatusLabel="Creative workspace"
       showRightSidebar={false}
     >
       <div className={styles.container}>
@@ -239,18 +244,15 @@ export default function CreativePage() {
                 className={`${styles.tab} ${activeTab === 'copywriting' ? styles.tabActive : ''}`}
                 onClick={() => setActiveTab('copywriting')}
               >
-                Tao Copywriting
+                Tạo Copywriting
               </button>
               <button
                 className={`${styles.tab} ${activeTab === 'competitor' ? styles.tabActive : ''}`}
                 onClick={() => {
                   setActiveTab('competitor');
-                  if (!competitorData && !isAnalyzing) {
-                    void handleAnalyzeCompetitor();
-                  }
                 }}
               >
-                Phan tich Doi thu
+                Phân tích đối thủ
               </button>
             </div>
 

@@ -25,6 +25,13 @@
   width: 100%;
 }
 
+.contentFullHeight {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .rightSidebar {
   width: 340px;
   background: var(--bg-panel);
@@ -35,4 +42,29 @@
   gap: 20px;
   transition: var(--transition);
   z-index: 20;
+}
+
+@media (max-width: 1180px) {
+  .rightSidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .layout {
+    width: 100%;
+  }
+
+  .mainWrapper {
+    min-width: 0;
+  }
+
+  .content {
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .contentFullHeight {
+    padding: 0;
+  }
 }

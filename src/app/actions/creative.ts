@@ -90,7 +90,7 @@ export async function generateCopywritingAction(params: GenerateCopyParams): Pro
 
     return { success: true, data: data || buildFallbackCopies(params) };
   } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Tao bai viet that bai.' };
+    return { success: false, error: error instanceof Error ? error.message : 'Tạo bài viết thất bại.' };
   }
 }
 
@@ -111,10 +111,10 @@ export async function analyzeCompetitorAction(params: AnalyzeCompetitorParams): 
 
     return {
       success: false,
-      error: 'Missing FB_AD_LIBRARY_ACCESS_TOKEN. Can not fetch live Meta Ad Library data.',
+      error: 'Thiếu FB_AD_LIBRARY_ACCESS_TOKEN. Không thể lấy dữ liệu live từ Meta Ad Library.',
     };
   } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Phan tich doi thu that bai.' };
+    return { success: false, error: error instanceof Error ? error.message : 'Phân tích đối thủ thất bại.' };
   }
 }
 
@@ -131,7 +131,7 @@ export async function generateCounterAdAction(params: CounterAdParams): Promise<
 
     return { success: true, data: data || buildFallbackCounterAd(params) };
   } catch (error: unknown) {
-    return { success: false, error: error instanceof Error ? error.message : 'Tao bai phan don that bai.' };
+    return { success: false, error: error instanceof Error ? error.message : 'Tạo bài phản đòn thất bại.' };
   }
 }
 
@@ -148,7 +148,7 @@ function extractCompetitorName(pageUrl: string, savedCompetitor?: string) {
     .replace(/\/$/, '')
     .split('/')[0];
 
-  return cleaned || 'Doi thu';
+  return cleaned || 'Đối thủ';
 }
 
 async function fetchMetaAdLibraryAds({
@@ -230,24 +230,24 @@ async function buildAnalysisFromMetaAds(
       angles: aiOverview?.angles?.length ? aiOverview.angles : fallbackOverview.angles,
     },
     source: 'meta-ad-library',
-    sourceLabel: `Live Meta Ad Library: ${metaAds.length} active ads fetched`,
+    sourceLabel: `Live Meta Ad Library: đã lấy ${metaAds.length} quảng cáo đang hoạt động`,
   };
 }
 
 function mapMetaAdToCompetitorAd(ad: MetaAdArchiveItem, index: number): CompetitorAd {
-  const body = ad.ad_creative_bodies?.[0] || ad.ad_creative_link_descriptions?.[0] || ad.ad_creative_link_titles?.[0] || 'No primary text returned by Meta.';
-  const startLabel = ad.ad_delivery_start_time ? `Start ${ad.ad_delivery_start_time.slice(0, 10)}` : 'Active ad';
+  const body = ad.ad_creative_bodies?.[0] || ad.ad_creative_link_descriptions?.[0] || ad.ad_creative_link_titles?.[0] || 'Meta không trả về primary text.';
+  const startLabel = ad.ad_delivery_start_time ? `Chạy từ ${ad.ad_delivery_start_time.slice(0, 10)}` : 'Quảng cáo đang hoạt động';
   const media = ad.media_type ? `[${ad.media_type}]` : '[Meta Ad Library creative]';
 
   return {
     id: ad.id || `meta_ad_${index + 1}`,
-    title: ad.ad_creative_link_titles?.[0] || `Meta active ad ${index + 1}`,
+    title: ad.ad_creative_link_titles?.[0] || `Quảng cáo Meta ${index + 1}`,
     timeLabel: startLabel,
-    thumbnail: ad.ad_snapshot_url ? `${media} Snapshot available` : media,
+    thumbnail: ad.ad_snapshot_url ? `${media} Có snapshot` : media,
     text: body,
-    engagement: 'Public metrics unavailable',
+    engagement: 'Meta không công khai chỉ số',
     status: index < 2 ? 'winning' : 'testing',
-    statusLabel: index < 2 ? 'Active Ad' : 'Active/Test',
+    statusLabel: index < 2 ? 'Đang chạy' : 'Đang test',
   };
 }
 
@@ -265,35 +265,35 @@ async function analyzeRealAdTexts(competitorName: string, audience: string, samp
 
 function buildRuleBasedOverview(competitorName: string, sampleTexts: string[]) {
   const joined = sampleTexts.join(' ').toLowerCase();
-  const discountFocus = /sale|discount|uu dai|giam|free|mien phi|hoc thu/.test(joined);
-  const proofFocus = /review|cam nhan|hoc vien|testimonial|case study/.test(joined);
+  const discountFocus = /sale|discount|uu dai|ưu đãi|giam|giảm|free|mien phi|miễn phí|hoc thu|học thử/.test(joined);
+  const proofFocus = /review|cam nhan|cảm nhận|hoc vien|học viên|testimonial|case study/.test(joined);
 
   return {
     hooks: [
       discountFocus
-        ? `${competitorName} is using promotion/free-trial hooks to reduce signup friction.`
-        : `${competitorName} is using benefit-led hooks around outcome and convenience.`,
+        ? `${competitorName} đang dùng hook ưu đãi/học thử miễn phí để giảm ma sát đăng ký.`
+        : `${competitorName} đang dùng hook xoay quanh kết quả và sự tiện lợi.`,
       proofFocus
-        ? 'They also lean on social proof from learners/reviews to build trust.'
-        : 'The ads do not show much verifiable proof in the text returned by Meta.',
+        ? 'Đối thủ cũng dựa vào social proof từ học viên/review để xây dựng niềm tin.'
+        : 'Text Meta trả về chưa cho thấy nhiều bằng chứng có thể kiểm chứng.',
     ],
     loopholes: [
-      'Public ad text does not expose private metrics like CPM, CPA or ROAS, so performance ranking is only directional.',
-      'The message can be countered by making guarantees, proof and differentiation more specific.',
-      'If the creative is promotion-heavy, a quality and credibility angle can separate your offer.',
+      'Public ad text không có chỉ số riêng như CPM, CPA hoặc ROAS, nên xếp hạng performance chỉ mang tính định hướng.',
+      'Có thể phản đòn bằng cam kết, bằng chứng và điểm khác biệt cụ thể hơn.',
+      'Nếu creative của đối thủ nặng ưu đãi, angle về chất lượng và độ tin cậy có thể giúp offer của bạn nổi bật.',
     ],
     angles: [
       {
-        title: 'Angle 1: Stronger proof',
-        hook: 'Do not choose only by discount. Ask for proof, learning path and measurable progress before you enroll.',
+        title: 'Angle 1: Bằng chứng mạnh hơn',
+        hook: 'Đừng chọn chỉ vì ưu đãi. Hãy hỏi bằng chứng, lộ trình học và cách đo tiến bộ trước khi đăng ký.',
       },
       {
-        title: 'Angle 2: Clear guarantee',
-        hook: 'A serious program should show what happens if you do not reach the promised outcome.',
+        title: 'Angle 2: Cam kết rõ ràng',
+        hook: 'Một chương trình nghiêm túc phải nói rõ điều gì xảy ra nếu bạn không đạt kết quả đã hứa.',
       },
       {
-        title: 'Angle 3: Personal path',
-        hook: 'Generic classes create generic results. A 1-on-1 path should start from your actual weakness.',
+        title: 'Angle 3: Lộ trình cá nhân',
+        hook: 'Lớp học đại trà thường tạo kết quả đại trà. Lộ trình 1 kèm 1 nên bắt đầu từ điểm yếu thật của bạn.',
       },
     ],
   };
@@ -301,15 +301,15 @@ function buildRuleBasedOverview(competitorName: string, sampleTexts: string[]) {
 
 function buildFallbackCopies({ product, usps, audience, tone, framework }: GenerateCopyParams): GeneratedCopy[] {
   const uspList = usps.split(/[,;\n]+/).map((item) => item.trim()).filter(Boolean);
-  const mainUsp = uspList[0] || 'giai phap chat luong cao';
-  const urgentPrefix = tone.includes('Cap bach') ? 'Chi hom nay: ' : '';
-  const playfulPrefix = tone.includes('Hai huoc') ? 'Tin vui cho nguoi ban ron: ' : '';
+  const mainUsp = uspList[0] || 'giải pháp chất lượng cao';
+  const urgentPrefix = tone.includes('Cấp bách') ? 'Chỉ hôm nay: ' : '';
+  const playfulPrefix = tone.includes('hài hước') ? 'Tin vui cho người bận rộn: ' : '';
 
   return [1, 2, 3].map((index) => ({
-    badge: `Bien the ${index} (${framework})`,
-    title: `${urgentPrefix}${playfulPrefix}${product} giup ${audience} co lo trinh ro rang hon.`,
-    body: `Neu ban dang can mot cach tiep can thuc te, ${product} tap trung vao dung van de can giai quyet.\n\nDiem noi bat:\n${uspList.map((item) => `- ${item}`).join('\n')}\n\nNoi dung nay nhan manh ${mainUsp} va loi ich co the cam nhan ngay trong qua trinh hoc.`,
-    cta: 'Nhan tin ngay de nhan tu van lo trinh va uu dai trai nghiem trong hom nay.',
+    badge: `Biến thể ${index} (${framework})`,
+    title: `${urgentPrefix}${playfulPrefix}${product} giúp ${audience} có lộ trình rõ ràng hơn.`,
+    body: `Nếu bạn đang cần một cách tiếp cận thực tế, ${product} tập trung vào đúng vấn đề cần giải quyết.\n\nĐiểm nổi bật:\n${uspList.map((item) => `- ${item}`).join('\n')}\n\nNội dung này nhấn mạnh ${mainUsp} và lợi ích có thể cảm nhận ngay trong quá trình học.`,
+    cta: 'Nhắn tin ngay để nhận tư vấn lộ trình và ưu đãi trải nghiệm trong hôm nay.',
     imagePrompt: `Facebook ad image for ${product}, target audience ${audience}, clean modern layout, realistic people, highlight ${mainUsp}.`,
   }));
 }
@@ -319,39 +319,39 @@ function buildFallbackCompetitorAnalysis(competitorName: string): CompetitorAnal
   const seed = competitorName.split('').reduce((total, char) => total + char.charCodeAt(0), 0);
   const activeAds = isIelts ? 42 : 10 + (seed % 37);
   const imagePct = isIelts ? 60 : 45 + (seed % 41);
-  const primaryHook = competitorName === 'Doi thu' ? 'doi thu nay' : competitorName;
+  const primaryHook = competitorName === 'Đối thủ' ? 'đối thủ này' : competitorName;
 
   return {
     adList: [
       {
         id: 'ad_001',
-        title: 'Mau QC 1 (Winning Ad)',
-        timeLabel: 'Chay tu 12/05',
-        thumbnail: '[Banner uu dai 50%]',
-        text: `${primaryHook} dang dung thong diep uu dai hoc thu, giao vien ban ngu va cam ket cai thien phan xa de keo lead nhanh.`,
-        engagement: `${900 + (seed % 900)} tuong tac`,
+        title: 'Mẫu QC 1 (Winning Ad)',
+        timeLabel: 'Chạy từ 12/05',
+        thumbnail: '[Banner ưu đãi 50%]',
+        text: `${primaryHook} đang dùng thông điệp ưu đãi học thử, giáo viên bản ngữ và cam kết cải thiện phản xạ để kéo lead nhanh.`,
+        engagement: `${900 + (seed % 900)} tương tác`,
         status: 'winning',
         statusLabel: 'Winning Ad',
       },
       {
         id: 'ad_002',
-        title: 'Mau QC 2 (Winning Ad)',
-        timeLabel: 'Chay tu 15/05',
-        thumbnail: '[Giao vien va hoc vien]',
-        text: `${primaryHook} khai thac noi dau hoc truoc quen sau va dua ra lich hoc linh hoat nhu mot loi hua chinh.`,
-        engagement: `${520 + (seed % 600)} tuong tac`,
+        title: 'Mẫu QC 2 (Winning Ad)',
+        timeLabel: 'Chạy từ 15/05',
+        thumbnail: '[Giáo viên và học viên]',
+        text: `${primaryHook} khai thác nỗi đau học trước quên sau và đưa ra lịch học linh hoạt như một lời hứa chính.`,
+        engagement: `${520 + (seed % 600)} tương tác`,
         status: 'winning',
         statusLabel: 'Winning Ad',
       },
       {
         id: 'ad_003',
-        title: 'Mau QC 3 (Testing Ad)',
+        title: 'Mẫu QC 3 (Testing Ad)',
         timeLabel: 'Video Ad',
-        thumbnail: '[Video review hoc vien]',
-        text: `${primaryHook} co xu huong dung video review hoc vien de tao social proof va giam nghi ngo truoc khi inbox.`,
-        engagement: `${1 + (seed % 4)}.${seed % 10}K luot xem`,
+        thumbnail: '[Video review học viên]',
+        text: `${primaryHook} có xu hướng dùng video review học viên để tạo social proof và giảm nghi ngờ trước khi inbox.`,
+        engagement: `${1 + (seed % 4)}.${seed % 10}K lượt xem`,
         status: 'testing',
-        statusLabel: 'Dang test',
+        statusLabel: 'Đang test',
       },
     ],
     overview: {
@@ -360,45 +360,45 @@ function buildFallbackCompetitorAnalysis(competitorName: string): CompetitorAnal
       imagePct,
       platforms: isIelts ? 'Facebook, Instagram, Audience Network' : 'Facebook, Instagram',
       hooks: [
-        `${primaryHook} tap trung vao uu dai, cam ket nhanh va loi ich de hieu de keo nguoi xem inbox.`,
-        'Dung yeu to giao vien ban ngu de tao niem tin nhanh, nhung it chung minh nang luc bang chung chi cu the.',
+        `${primaryHook} tập trung vào ưu đãi, cam kết nhanh và lợi ích dễ hiểu để kéo người xem inbox.`,
+        'Dùng yếu tố giáo viên bản ngữ để tạo niềm tin nhanh, nhưng ít chứng minh năng lực bằng chứng chỉ cụ thể.',
       ],
       loopholes: [
-        'Cam ket dau ra chua duoc trinh bay ro bang van ban hoac dieu kien hoan tien cu the.',
-        'Hinh anh quang cao con generic, chua cho thay trai nghiem 1 kem 1 that su ca nhan hoa.',
-        'It bang chung ve chung chi su pham quoc te hoac quy trinh danh gia tien bo cua hoc vien.',
+        'Cam kết đầu ra chưa được trình bày rõ bằng văn bản hoặc điều kiện hoàn tiền cụ thể.',
+        'Hình ảnh quảng cáo còn generic, chưa cho thấy trải nghiệm 1 kèm 1 thật sự cá nhân hóa.',
+        'Ít bằng chứng về chứng chỉ sư phạm quốc tế hoặc quy trình đánh giá tiến bộ của học viên.',
       ],
       angles: [
         {
-          title: 'Angle 1: Chat luong giao vien co chung chi',
-          hook: 'Hoc voi giao vien ban ngu la chua du. Hay chon giao vien co chung chi giang day va lo trinh sua loi tung buoi.',
+          title: 'Angle 1: Chất lượng giáo viên có chứng chỉ',
+          hook: 'Học với giáo viên bản ngữ là chưa đủ. Hãy chọn giáo viên có chứng chỉ giảng dạy và lộ trình sửa lỗi từng buổi.',
         },
         {
-          title: 'Angle 2: Cam ket dau ra ro rang',
-          hook: 'Neu mot khoa hoc khong dam cam ket ket qua bang van ban, ban dang tu chiu toan bo rui ro.',
+          title: 'Angle 2: Cam kết đầu ra rõ ràng',
+          hook: 'Nếu một khóa học không dám cam kết kết quả bằng văn bản, bạn đang tự chịu toàn bộ rủi ro.',
         },
         {
-          title: 'Angle 3: Lich hoc cho nguoi cuc ban',
-          hook: 'Khong can ep minh theo lich co dinh. Lo trinh 1 kem 1 linh hoat giup ban hoc deu ngay ca khi lich lam viec thay doi.',
+          title: 'Angle 3: Lịch học cho người cực bận',
+          hook: 'Không cần ép mình theo lịch cố định. Lộ trình 1 kèm 1 linh hoạt giúp bạn học đều ngay cả khi lịch làm việc thay đổi.',
         },
       ],
     },
     source: 'demo-fallback',
-    sourceLabel: 'Demo fallback: no live Meta Ad Library fetch was performed',
+    sourceLabel: 'Demo fallback: chưa gọi dữ liệu live từ Meta Ad Library',
   };
 }
 
 function buildFallbackCounterAd(params: CounterAdParams): CounterAd {
   return {
-    badge: `Phan don: ${params.angleTitle}`,
-    targetLoophole: params.loophole || 'Doi thu chua chung minh ro cam ket chat luong va ket qua dau ra.',
-    hook: params.angleHook || 'Dung danh cuoc thoi gian vao mot khoa hoc thieu cam ket ro rang.',
-    body: `Nhieu nguoi chon khoa hoc vi uu dai re, nhung sau do lai mat them thoi gian vi khong co lo trinh phu hop.\n\nVoi ${params.ourProduct}, chung toi tap trung vao su an tam ngay tu dau:\n${params.ourUsps
+    badge: `Phản đòn: ${params.angleTitle}`,
+    targetLoophole: params.loophole || 'Đối thủ chưa chứng minh rõ cam kết chất lượng và kết quả đầu ra.',
+    hook: params.angleHook || 'Đừng đánh cược thời gian vào một khóa học thiếu cam kết rõ ràng.',
+    body: `Nhiều người chọn khóa học vì ưu đãi rẻ, nhưng sau đó lại mất thêm thời gian vì không có lộ trình phù hợp.\n\nVới ${params.ourProduct}, chúng tôi tập trung vào sự an tâm ngay từ đầu:\n${params.ourUsps
       .split(/[,;\n]+/)
       .map((item) => `- ${item.trim()}`)
-      .join('\n')}\n\nBan can mot lo trinh ro rang, nguoi huong dan du nang luc va cach do tien bo minh bach.`,
-    cta: 'Nhan tin ngay de nhan tu van lo trinh va suat trai nghiem mien phi trong hom nay.',
+      .join('\n')}\n\nBạn cần một lộ trình rõ ràng, người hướng dẫn đủ năng lực và cách đo tiến bộ minh bạch.`,
+    cta: 'Nhắn tin ngay để nhận tư vấn lộ trình và suất trải nghiệm miễn phí trong hôm nay.',
     strategyDescription:
-      'Bai viet dung loss aversion de nhan manh rui ro khi chon giai phap mo ho, sau do giam lo ngai bang cam ket va bang chung chat luong.',
+      'Bài viết dùng loss aversion để nhấn mạnh rủi ro khi chọn giải pháp mơ hồ, sau đó giảm lo ngại bằng cam kết và bằng chứng chất lượng.',
   };
 }

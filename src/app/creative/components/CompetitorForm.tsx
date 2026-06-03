@@ -25,12 +25,12 @@ export function CompetitorForm({
   return (
     <div className={styles.formStack}>
       <div className={styles.infoBox}>
-        <strong>Tinh nang moi:</strong> Nhap Fanpage doi thu. AI se phan tich cac quang cao dang chay de tim hook,
-        diem yeu va goc tiep can co the khai thac.
+        <strong>Tính năng mới:</strong> Nhập Fanpage đối thủ. AI sẽ phân tích các quảng cáo đang chạy để tìm hook,
+        điểm yếu và góc tiếp cận có thể khai thác.
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Link Fanpage doi thu (Facebook)</label>
+        <label className={styles.formLabel}>Link Fanpage đối thủ (Facebook)</label>
         <input
           className={styles.formControl}
           value={competitorUrl}
@@ -39,7 +39,7 @@ export function CompetitorForm({
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Hoac chon doi thu da luu</label>
+        <label className={styles.formLabel}>Hoặc chọn đối thủ đã lưu</label>
         <select
           className={styles.formControl}
           value={savedCompetitor}
@@ -57,12 +57,12 @@ export function CompetitorForm({
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Khach hang muc tieu</label>
+        <label className={styles.formLabel}>Khách hàng mục tiêu</label>
         <input className={styles.formControl} value={audience} onChange={(event) => onAudienceChange(event.target.value)} />
       </div>
 
       <button className="btn btn-primary w-full" onClick={onAnalyze} disabled={isAnalyzing}>
-        {isAnalyzing ? 'Dang phan tich...' : 'Quet Ad Library & phan tich'}
+        {isAnalyzing ? 'Đang phân tích...' : 'Quét Ad Library & phân tích'}
       </button>
     </div>
   );

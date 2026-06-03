@@ -11,10 +11,14 @@
             "id": "a38084d760af0693",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "docs/superpowers/plans/2026-05-18-competitor-analysis-enhancements-plan.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-05-18-competitor-analysis-enhancements-plan"
             }
           }
         ]
@@ -173,11 +177,15 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "agent-client:Open agent client": false
     }
   },
   "active": "a38084d760af0693",
   "lastOpenFiles": [
+    "node_modules/eslint-plugin-react/README.md",
+    "10-Projects/Features/AI-Performance-Insights.md",
+    "10-Projects/Features/Campaign-Management.md",
     "src/components/AI/AiAlerts.tsx",
     "src/components/AI",
     "node_modules/prisma/build/public/pages/http/splash.html",
@@ -198,7 +206,6 @@
     "node_modules/prisma/build/public/assets/number.85ddf96b.svg",
     "node_modules/prisma/build/public/assets/jetbrains-mono-latin-ext-400-normal.6315c53c.woff2",
     "node_modules/prisma/build/public/assets/jetbrains-mono-latin-400-normal.80a5dc9e.woff2",
-    "node_modules/prisma/build/public/assets/jetbrains-mono-cyrillic-400-normal.1ae57fe2.woff2",
     "node_modules/@emnapi/wasi-threads/README.md",
     "node_modules/@tybys/wasm-util/README.md",
     "node_modules/@emnapi/core/README.md",
@@ -222,8 +229,6 @@
     "node_modules/dotenv/skills/dotenv/SKILL.md",
     "node_modules/aws-ssl-profiles/README.md",
     "node_modules/better-result/README.md",
-    "node_modules/@hono/node-server/README.md",
-    "node_modules/dotenv/README.md",
     "Untitled.canvas"
   ]
 }

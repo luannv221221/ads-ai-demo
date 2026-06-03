@@ -6,16 +6,20 @@ import Dashboard from "@/components/Dashboard/Dashboard";
 import AiAlerts from "@/components/AI/AiAlerts";
 import { syncAllAccounts } from '@/app/actions/facebook';
 import { getAdAccounts } from '@/app/actions/dashboard';
+import { createLastDaysDateRange, type DateRange } from '@/lib/dateRange';
+
+interface AdAccountSummary {
+  id: string;
+  name?: string;
+  account_id?: string;
+}
 
 export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<AdAccountSummary[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>('all');
-  const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default to 30 days ago to show spend
-    end: new Date().toISOString().split('T')[0]
-  });
+  const [dateRange, setDateRange] = useState<DateRange>(() => createLastDaysDateRange(30));
 
   useEffect(() => {
     async function loadAccounts() {
@@ -42,12 +46,8 @@ export default function Home() {
     setIsRefreshing(false);
   };
 
-  const handleRangeChange = (value: string) => {
-    const [date, type] = value.split('_');
-    setDateRange(prev => ({
-      ...prev,
-      [type]: date
-    }));
+  const handleRangeChange = (range: DateRange) => {
+    setDateRange(range);
     setRefreshKey(prev => prev + 1);
   };
 
@@ -56,7 +56,11 @@ export default function Home() {
       title="Dashboard War Room" 
       onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
-      onDateChange={handleRangeChange}
+      dateRange={dateRange}
+      onDateRangeChange={handleRangeChange}
+      showDateRange
+      showAccountSelect
+      dataStatus="live"
       accounts={accounts}
       selectedAccountId={selectedAccountId}
       onAccountChange={(id) => {
@@ -74,4 +78,3 @@ export default function Home() {
     </MainLayout>
   );
 }
-

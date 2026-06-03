@@ -17,7 +17,7 @@ export function CopyResults({ framework, copies, isGenerating, onCopy, onDelete,
     return (
       <div className={styles.loadingState}>
         <div className={styles.spinner} />
-        <span>AI dang tao noi dung quang cao...</span>
+        <span>AI đang tạo nội dung quảng cáo...</span>
       </div>
     );
   }
@@ -28,27 +28,27 @@ export function CopyResults({ framework, copies, isGenerating, onCopy, onDelete,
         <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
-        <div className={styles.emptyTitle}>AI san sang sang tao</div>
-        <div className={styles.emptyText}>Dien brief ben trai va tao cac bien the quang cao de test nhanh.</div>
+        <div className={styles.emptyTitle}>AI sẵn sàng sáng tạo</div>
+        <div className={styles.emptyText}>Điền brief bên trái và tạo các biến thể quảng cáo để test nhanh.</div>
       </div>
     );
   }
 
   return (
     <div className={styles.outputStack}>
-      <h3 className={styles.sectionTitle}>Ket qua ({copies.length} bien the {framework})</h3>
+      <h3 className={styles.sectionTitle}>Kết quả ({copies.length} biến thể {framework})</h3>
 
       {copies.map((copy, index) => (
         <article key={`${copy.badge}-${index}`} className={styles.aiCard}>
           <div className={styles.aiCardHeader}>
             <div className={styles.aiBadge}>{copy.badge}</div>
-            <button className="btn-icon" title="Xoa" onClick={() => onDelete(index)}>
+            <button className="btn-icon" title="Xóa" onClick={() => onDelete(index)}>
               x
             </button>
           </div>
 
-          <EditableField label="Tieu de / Hook" value={copy.title} isStrong onChange={(value) => onUpdate(index, { ...copy, title: value })} />
-          <EditableField label="Noi dung chinh" value={copy.body} onChange={(value) => onUpdate(index, { ...copy, body: value })} />
+          <EditableField label="Tiêu đề / Hook" value={copy.title} isStrong onChange={(value) => onUpdate(index, { ...copy, title: value })} />
+          <EditableField label="Nội dung chính" value={copy.body} onChange={(value) => onUpdate(index, { ...copy, body: value })} />
           <EditableField label="CTA" value={copy.cta} onChange={(value) => onUpdate(index, { ...copy, cta: value })} />
           <EditableField
             label="Image Prompt"
@@ -57,11 +57,11 @@ export function CopyResults({ framework, copies, isGenerating, onCopy, onDelete,
           />
 
           <div className={styles.aiActions}>
-            <button className="btn" onClick={() => onCopy(combineCreativeText(copy))}>Sao chep toan bo</button>
+            <button className="btn" onClick={() => onCopy(combineCreativeText(copy))}>Sao chép toàn bộ</button>
             <button className="btn" onClick={() => onCopy(copy.imagePrompt || '')} disabled={!copy.imagePrompt}>
-              Sao chep Image Prompt
+              Sao chép Image Prompt
             </button>
-            <button className="btn" onClick={() => onSave(copy)}>Luu vao thu vien</button>
+            <button className="btn" onClick={() => onSave(copy)}>Lưu vào thư viện</button>
           </div>
         </article>
       ))}
