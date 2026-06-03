@@ -25,6 +25,11 @@
   width: 100%;
 }
 
+.contentFullHeight {
+  padding: 0;
+  overflow: hidden;
+}
+
 .rightSidebar {
   width: 340px;
   background: var(--bg-panel);
@@ -35,4 +40,10 @@
   gap: 20px;
   transition: var(--transition);
   z-index: 20;
+}
+
+@media (max-width: 1200px) {
+  .rightSidebar {
+    display: none;
+  }
 }

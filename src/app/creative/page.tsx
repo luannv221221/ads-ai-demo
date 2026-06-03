@@ -221,13 +221,15 @@ export default function CreativePage() {
 
   return (
     <MainLayout
-      title="Tro Ly Creative AI"
+      title="Creative"
+      contentMode="fullHeight"
       onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
       accounts={accounts}
       selectedAccountId={selectedAccountId}
       onAccountChange={setSelectedAccountId}
       showRightSidebar={false}
+      showDateRange={false}
     >
       <div className={styles.container}>
         <Toast toast={toast} />

@@ -5,6 +5,7 @@ import MainLayout from '@/components/Layout/MainLayout';
 import styles from './campaigns.module.css';
 import { getAdAccounts } from '@/app/actions/dashboard';
 import { syncAllAccounts } from '@/app/actions/facebook';
+import { createLastDaysDateRange, type DateRange } from '@/lib/dateRange';
 import { 
   getCampaignsList, 
   updateCampaignStatus, 
@@ -23,10 +24,7 @@ export default function CampaignsPage() {
   // Account & date range states
   const [accounts, setAccounts] = useState<any[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>('all');
-  const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    end: new Date().toISOString().split('T')[0]
-  });
+  const [dateRange, setDateRange] = useState<DateRange>(() => createLastDaysDateRange(30));
 
   // Campaigns list data
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -179,13 +177,8 @@ export default function CampaignsPage() {
     setIsRefreshing(false);
   };
 
-  const handleDateChange = (value: string) => {
-    const [date, type] = value.split('_');
-    setDateRange(prev => ({
-      ...prev,
-      [type]: date
-    }));
-    setRefreshKey(prev => prev + 1);
+  const handleRangeChange = (range: DateRange) => {
+    setDateRange(range);
   };
 
   // Status toggle handler
@@ -368,10 +361,13 @@ export default function CampaignsPage() {
 
   return (
     <MainLayout
-      title="Quản Lý Chiến Dịch"
+      title="Chiến dịch"
       onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
-      onDateChange={handleDateChange}
+      dateRange={dateRange}
+      onDateRangeChange={handleRangeChange}
+      showDateRange={true}
+      showAccountSelect={true}
       accounts={accounts}
       selectedAccountId={selectedAccountId}
       onAccountChange={(id) => {

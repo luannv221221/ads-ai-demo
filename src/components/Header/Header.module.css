@@ -33,36 +33,9 @@
 
 .subtitle {
   font-size: 13px;
-  color: #71717a;
+  color: var(--text-muted);
   margin: 0;
   margin-top: 2px;
-}
-
-.liveIndicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: var(--danger-bg);
-  color: var(--danger);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.pulse {
-  width: 8px;
-  height: 8px;
-  background: var(--danger);
-  border-radius: 50%;
-  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  50% { opacity: .7; transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
 }
 
 .actions {
@@ -127,21 +100,21 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #18181b; /* Màu Zinc 900 rất đậm */
+  background: var(--bg-surface);
   padding: 8px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   transition: all 0.2s ease;
 }
 
 .inputWrapper:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: #27272a;
+  border-color: var(--border-light);
+  background: var(--bg-hover);
 }
 
 .inputLabel {
   font-size: 10px;
-  color: #a1a1aa;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
@@ -150,7 +123,7 @@
 .dateInput {
   background: transparent;
   border: none;
-  color: #ffffff !important; /* Ép màu trắng */
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 600;
   outline: none;
@@ -160,8 +133,7 @@
 }
 
 .dateInput::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Chuyển icon lịch sang màu trắng */
-  opacity: 0.8;
+  opacity: 0.6;
   cursor: pointer;
 }
 
@@ -169,22 +141,22 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #18181b;
+  background: var(--bg-surface);
   padding: 8px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   transition: all 0.2s ease;
 }
 
 .selectWrapper:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: #27272a;
+  border-color: var(--border-light);
+  background: var(--bg-hover);
 }
 
 .accountSelect {
   background: transparent;
   border: none;
-  color: #ffffff !important;
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 600;
   outline: none;
@@ -193,8 +165,24 @@
   width: 180px;
   appearance: none;
   padding-right: 20px;
-  background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23a1a1aa" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
   background-repeat: no-repeat;
   background-position: right center;
 }
 
+@media (max-width: 768px) {
+  .header {
+    padding: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+}

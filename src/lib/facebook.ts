@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { FacebookAdsApi } from 'facebook-nodejs-business-sdk';
 
 const accessToken = process.env.FB_ACCESS_TOKEN;

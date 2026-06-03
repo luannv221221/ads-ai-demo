@@ -20,7 +20,7 @@ export default function AiAnalysisPage() {
     {
       role: 'ai',
       content:
-        'Toi la AI Insights assistant. Bam Quet toan bo tai khoan de lay campaign data, sau do hoi toi campaign nao nen scale hoac can tat.',
+        'Tôi là trợ lý AI Insights. Bấm Quét toàn bộ tài khoản để lấy dữ liệu campaign, sau đó hỏi tôi campaign nào nên scale hoặc cần tắt.',
     },
   ]);
 
@@ -35,11 +35,11 @@ export default function AiAnalysisPage() {
         ...prev,
         {
           role: 'ai',
-          content: `Da tao ${data.recommendations.length} insight tu nguon du lieu ${data.summary.source}. ROAS hien tai: ${data.summary.roas}x.`,
+          content: `Da tao ${data.recommendations.length} insight tu nguồn dữ liệu ${data.summary.source}. ROAS hiện tại: ${data.summary.roas}x.`,
         },
       ]);
     } else {
-      setError(result.error || 'Khong the tao AI insights');
+      setError(result.error || 'Không thể tạo AI insights');
     }
     setIsLoading(false);
   }, [selectedAccountId]);
@@ -66,8 +66,10 @@ export default function AiAnalysisPage() {
 
   return (
     <MainLayout
-      title="AI Insights"
+      title="Phân tích AI"
+      contentMode="fullHeight"
       showRightSidebar={false}
+      showDateRange={false}
       onRefresh={loadInsights}
       isRefreshing={isLoading}
       accounts={payload?.accounts || []}

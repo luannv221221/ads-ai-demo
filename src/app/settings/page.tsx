@@ -2,11 +2,21 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/Layout/MainLayout';
+import { FeedbackState } from '@/components/ui/FeedbackState';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { syncAllAccounts } from '@/app/actions/facebook';
+import styles from './settings.module.css';
+
+interface SyncResult {
+  success: boolean;
+  count?: number;
+  synced?: number;
+  error?: string;
+}
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<SyncResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleTestConnection = async () => {
@@ -23,60 +33,68 @@ export default function SettingsPage() {
   };
 
   return (
-    <MainLayout title="Cấu Hình Hệ Thống">
-      <div style={{ maxWidth: '800px' }}>
-        <section style={{ 
-          background: 'var(--bg-panel)', 
-          padding: '32px', 
-          borderRadius: '16px', 
-          border: '1px solid var(--border)' 
-        }}>
-          <h2 style={{ marginBottom: '16px', fontSize: '18px' }}>Trạng Thái Kết Nối Đa Tài Khoản</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '14px' }}>
-            Hệ thống sẽ quét và đồng bộ dữ liệu từ tất cả Ad Accounts của anh.
+    <MainLayout 
+      title="Cài đặt" 
+      showDateRange={false}
+      showAccountSelect={false}
+    >
+      <div className={styles.container}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Trạng thái kết nối</h2>
+          
+          <div className={styles.statusGrid}>
+            <div className={styles.statusCard}>
+              <div className={styles.statusLabel}>Meta Marketing API</div>
+              <div className={styles.statusValue}>
+                <StatusBadge tone={result?.success ? 'success' : 'neutral'}>
+                  {result?.success ? 'Đã kết nối' : 'Chưa đồng bộ'}
+                </StatusBadge>
+              </div>
+            </div>
+            <div className={styles.statusCard}>
+              <div className={styles.statusLabel}>Tài khoản tìm thấy</div>
+              <div className={styles.statusValue}>{result?.count ?? '-'}</div>
+            </div>
+            <div className={styles.statusCard}>
+              <div className={styles.statusLabel}>Đã đồng bộ</div>
+              <div className={styles.statusValue}>{result?.synced ?? '-'}</div>
+            </div>
+          </div>
+
+          <p className={styles.sectionDesc}>
+            Hệ thống sẽ quét và đồng bộ dữ liệu từ tất cả Ad Accounts của bạn.
           </p>
           
           <button 
+            className={styles.syncButton}
             onClick={handleTestConnection}
             disabled={loading}
-            style={{
-              background: 'var(--accent)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
+            type="button"
+            aria-label="Đồng bộ toàn bộ tài khoản"
           >
-            {loading ? 'Đang đồng bộ...' : 'Kích Hoạt Đồng Bộ Toàn Bộ'}
+            {loading ? 'Đang đồng bộ...' : 'Kích hoạt đồng bộ toàn bộ'}
           </button>
 
           {error && (
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '16px', 
-              background: 'var(--danger-bg)', 
-              color: 'var(--danger)', 
-              borderRadius: '8px',
-              fontSize: '14px'
-            }}>
+            <div className={styles.errorBox}>
               {error}
             </div>
           )}
 
           {result && result.success && (
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '16px', 
-              background: 'var(--success-bg)', 
-              color: 'var(--success)', 
-              borderRadius: '8px',
-              fontSize: '14px'
-            }}>
-              ✅ Thành công! Đã tìm thấy {result.count} tài khoản và đồng bộ {result.synced} tài khoản đang hoạt động.
+            <div className={styles.successBox}>
+              Thành công! Đã tìm thấy {result.count} tài khoản và đồng bộ {result.synced} tài khoản đang hoạt động.
             </div>
           )}
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Thông tin API</h2>
+          <FeedbackState 
+            tone="info" 
+            title="Lưu ý về quyền API" 
+            description="Nếu gặp lỗi code 10 / subcode 2332002, ứng dụng Meta của bạn chưa được cấp quyền Ads Library API. Token hợp lệ nhưng app chưa có quyền gọi /ads_archive."
+          />
         </section>
       </div>
     </MainLayout>

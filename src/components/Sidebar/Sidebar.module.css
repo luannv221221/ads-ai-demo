@@ -8,13 +8,14 @@
   transition: var(--transition);
   z-index: 20;
   height: 100vh;
+  flex-shrink: 0;
 }
 
 .logoContainer {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   padding: 0 4px;
 }
 
@@ -39,20 +40,40 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+}
+
+.navGroup {
+  margin-bottom: 16px;
+}
+
+.navGroupLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  padding: 0 16px;
+  margin-bottom: 4px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 10px;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
   transition: var(--transition);
+  white-space: nowrap;
+}
+
+.navLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .navLink:hover {
@@ -105,4 +126,20 @@
 .userRole {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    z-index: 80;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
 }
