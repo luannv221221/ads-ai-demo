@@ -484,7 +484,7 @@ export default function CampaignsPage() {
                 <tr>
                   <th className={styles.th} style={{ width: '40px' }}>
                     <input 
-                      type="checkbox" 
+                      type="checkbox" aria-label="Chọn chiến dịch" 
                       className={styles.customCheckbox}
                       checked={filteredCampaigns.length > 0 && selectedIds.length === filteredCampaigns.length}
                       onChange={(e) => handleSelectAll(e.target.checked)}
@@ -588,7 +588,7 @@ export default function CampaignsPage() {
                       >
                         <td className={styles.td}>
                           <input 
-                            type="checkbox" 
+                            type="checkbox" aria-label="Chọn chiến dịch" 
                             className={styles.customCheckbox}
                             checked={isSelected}
                             onChange={(e) => handleCheckboxChange(c.id, e.target.checked)}

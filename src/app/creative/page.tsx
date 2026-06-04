@@ -13,6 +13,8 @@ import { CopywritingForm } from './components/CopywritingForm';
 import { CreativeLibrary } from './components/CreativeLibrary';
 import { Toast } from './components/Toast';
 import { CUSTOM_COMPETITOR_LABEL, DEFAULT_COMPETITOR_FORM, DEFAULT_COPY_FORM } from './constants';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { FeedbackState } from '@/components/ui/FeedbackState';
 import { createImagePrompt, createSavedCreative, readCreativeLibrary, writeCreativeLibrary } from './creative-utils';
 import type {
   AdAccountSummary,
@@ -246,7 +248,7 @@ export default function CreativePage() {
               <button
                 className={`${styles.tab} ${activeTab === 'competitor' ? styles.tabActive : ''}`}
                 onClick={() => {
-                  setActiveTab('competitor');
+                  setActiveTab('competitor'); /* Dữ liệu từ Meta Ad Library */
                   if (!competitorData && !isAnalyzing) {
                     void handleAnalyzeCompetitor();
                   }

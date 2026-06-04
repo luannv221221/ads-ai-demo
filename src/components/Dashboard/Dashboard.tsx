@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Dashboard.module.css';
 import { getDashboardStats, getRealCampaignsData } from '@/app/actions/dashboard';
+import { StatusBadge } from '../ui/StatusBadge';
+import { FeedbackState } from '../ui/FeedbackState';
 
 // Premium high-fidelity mock data representing Facebook Campaigns, Ad Sets, and Ads
 const CAMPAIGNS_DATA = [
@@ -256,6 +258,7 @@ export default function Dashboard({
   adAccountId = 'all'
 }: DashboardProps) {
   const [stats, setStats] = useState<any>(null);
+  const [isMock, setIsMock] = useState(false);
   const [loading, setLoading] = useState(true);
   const [campaigns, setCampaigns] = useState<any[]>([]);
 
@@ -282,12 +285,15 @@ export default function Dashboard({
       
       if (campaignsResult.success) {
         if (campaignsResult.isMock || !campaignsResult.data || campaignsResult.data.length === 0) {
+          setIsMock(true);
           setCampaigns(CAMPAIGNS_DATA);
         } else {
+          setIsMock(false);
           setCampaigns(campaignsResult.data);
         }
       } else {
-        setCampaigns(CAMPAIGNS_DATA);
+        setIsMock(true);
+          setCampaigns(CAMPAIGNS_DATA);
       }
       
       setLoading(false);
@@ -353,6 +359,9 @@ export default function Dashboard({
           <h2 className={styles.sectionTitle}>1. Toàn Cảnh Chiến Trường (Global)</h2>
           <span className={styles.liveIndicator}>Live</span>
         </div>
+        <StatusBadge tone={isMock ? 'warning' : 'success'}>
+          {isMock ? 'Dữ liệu demo' : 'Dữ liệu Meta'}
+        </StatusBadge>
         <div className={styles.kpiGrid}>
           <KpiCard 
             title="TỔNG CHI TIÊU" 

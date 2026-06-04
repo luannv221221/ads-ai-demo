@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAiInsightsAction, type AiInsightsPayload, type InsightRecommendation } from '@/app/actions/aiInsights';
 import MainLayout from '@/components/Layout/MainLayout';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import styles from './page.module.css';
 
 interface ChatMessage {
@@ -160,8 +161,23 @@ function RecommendationCard({ item }: { item: InsightRecommendation }) {
           </div>
         ))}
       </div>
+      {item.reasoning && item.reasoning.length > 0 && (
+        <div className={styles.reasoningBlock}>
+          <span className={styles.reasoningLabel}>Tại sao AI đề xuất:</span>
+          <ul className={styles.reasoningList}>
+            {item.reasoning.map((r, idx) => (
+              <li key={idx}>{r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className={styles.cardFooter}>
-        <span>{item.actionHint}</span>
+        <div className={styles.footerLeft}>
+          <StatusBadge tone={item.confidence === 'high' ? 'success' : item.confidence === 'medium' ? 'warning' : 'neutral'}>
+            {item.confidence === 'high' ? 'Độ tin cậy cao' : item.confidence === 'medium' ? 'Độ tin cậy trung bình' : 'Độ tin cậy thấp'}
+          </StatusBadge>
+          <span>{item.actionHint}</span>
+        </div>
         <button className="btn">{item.actionLabel}</button>
       </div>
     </article>

@@ -2,7 +2,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
   height: calc(100vh - 72px);
-  margin: -24px;
   overflow: hidden;
   background: var(--bg);
 }
@@ -299,7 +298,6 @@
   .shell {
     grid-template-columns: 1fr;
     height: auto;
-    margin: -16px;
     overflow: visible;
   }
 
@@ -330,4 +328,40 @@
   .summaryGrid {
     grid-template-columns: 1fr;
   }
+}
+
+
+.reasoningBlock {
+  border-top: 1px solid var(--border-light);
+  padding-top: 10px;
+}
+
+.reasoningLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reasoningList {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.footerLeft span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

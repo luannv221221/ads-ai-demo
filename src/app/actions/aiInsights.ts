@@ -17,9 +17,12 @@ export interface InsightRecommendation {
   title: string;
   description: string;
   impact: string;
+  confidence: 'low' | 'medium' | 'high';
+  reasoning: string[];
   metrics: InsightMetric[];
   actionLabel: string;
   actionHint: string;
+  relatedCampaignIds: string[];
 }
 
 export interface AiInsightsPayload {
@@ -117,6 +120,9 @@ function buildRecommendations(campaigns: CampaignLike[], stats: Record<string, u
       ],
       actionLabel: 'Review campaign',
       actionHint: 'Mo Campaign Management va kiem tra ad set co CPA cao nhat.',
+      confidence: 'high',
+      reasoning: ['CPA cao hơn mức trung bình các chiến dịch khác', 'Chi tiêu lớn nhưng hiệu quả thấp gây lãng phí ngân sách'],
+      relatedCampaignIds: [riskCandidate.id],
     });
   }
 
@@ -135,6 +141,9 @@ function buildRecommendations(campaigns: CampaignLike[], stats: Record<string, u
       ],
       actionLabel: 'Scale budget',
       actionHint: 'Tang ngan sach 20-30% va theo doi CPA trong 24h.',
+      confidence: 'medium' as const,
+      reasoning: ['ROAS đang ở mức tốt, có tiềm năng mở rộng', 'Trạng thái scale cho thấy đây là chiến dịch ưu tiên'],
+      relatedCampaignIds: [scaleCandidate.id],
     });
   }
 
@@ -153,6 +162,9 @@ function buildRecommendations(campaigns: CampaignLike[], stats: Record<string, u
       ],
       actionLabel: 'Inspect spend',
       actionHint: 'Kiem tra ad set/ads co spend cao nhung conversion thap.',
+      confidence: 'medium' as const,
+      reasoning: ['Chiến dịch này đang chiếm phần lớn ngân sách', 'Cần đảm bảo hiệu quả tương xứng với mức chi tiêu'],
+      relatedCampaignIds: [heavySpend.id],
     });
   }
 
@@ -179,6 +191,9 @@ function buildFallbackRecommendations(stats: Record<string, unknown> | null): In
       ],
       actionLabel: 'Sync data',
       actionHint: 'Dong bo lai tai khoan quang cao de co campaign/adset detail.',
+      confidence: 'low' as const,
+      reasoning: ['Chưa đủ dữ liệu chiến dịch chi tiết để phân tích sâu'],
+      relatedCampaignIds: [],
     },
   ];
 }
